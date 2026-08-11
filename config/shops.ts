@@ -81,6 +81,7 @@ export type ShopConfig = {
     configurator: string;
     addToCartButton: string;
     standardQuantityInput: string;
+    checkoutButton: string;
   };
 
   testProducts: {
@@ -115,11 +116,11 @@ export const shops: ShopConfig[] = [
       addToCartButton:
         'main a.add-cart.cart-btn:visible',
 
-      /*
-       * Controleer deze selector later bij het standaardproduct.
-       */
       standardQuantityInput:
         'main input[name="quantity"]:visible',
+
+      checkoutButton:
+        'a[href*="/checkout"]:visible, a[href*="/cart/checkout"]:visible, a:has-text("Afrekenen"):visible, button:has-text("Afrekenen"):visible',
     },
 
     testProducts: {

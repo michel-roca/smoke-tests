@@ -23,6 +23,11 @@ import {
   runConfigurator,
 } from '../helpers/configurator';
 
+import {
+  expectDataLayerEvent,
+  installDataLayerTracker,
+} from '../helpers/analytics';
+
 for (const shop of shops) {
   test.describe(
     `${shop.name} smoke tests`,
@@ -51,6 +56,9 @@ for (const shop of shops) {
               );
             },
           );
+
+          const dataLayerEvents =
+            await installDataLayerTracker(page);
 
           const configurator = page
             .locator(
@@ -92,9 +100,17 @@ for (const shop of shops) {
           );
 
           const cartMain =
-            await openCartFromConfirmation(
-              page,
-            );
+            await openCartFromConfirmation(page);
+          
+          await test.step(
+            'Conversie-event add_to_cart controleren',
+            async () => {
+              await expectDataLayerEvent(
+                dataLayerEvents,
+                'add_to_cart',
+              );
+            },
+          );
 
           await test.step(
             'Product en configuratie in cart controleren',
@@ -166,9 +182,21 @@ for (const shop of shops) {
               await openAndCheckCheckout(
                 page,
                 cartMain,
+                shop.selectors.checkoutButton,
               );
             },
           );
+
+          await test.step(
+            'Conversie-event begin_checkout controleren',
+            async () => {
+              await expectDataLayerEvent(
+                dataLayerEvents,
+                'begin_checkout',
+              );
+            },
+          );
+
         },
       );
 
@@ -185,6 +213,9 @@ for (const shop of shops) {
               product.pageTitle,
             );
           });
+
+          const dataLayerEvents =
+            await installDataLayerTracker(page);
 
           await test.step(
             'Aantal van gekozen productvariant aanpassen',
@@ -207,14 +238,30 @@ for (const shop of shops) {
 
               await expect(quantityInput).toBeVisible();
 
-              await quantityInput.fill(
-                String(product.quantity),
-              );
+              const increaseButton = variantRow
+                .getByRole('link', {
+                  name: /waarde verhogen/i,
+                })
+                .first();
 
-              await quantityInput.press('Tab');
+              await expect(increaseButton).toBeVisible();
+
+              for (
+                let index = 0;
+                index < product.quantity;
+                index += 1
+              ) {
+                await increaseButton.click();
+              }
 
               await expect(quantityInput).toHaveValue(
                 String(product.quantity),
+              );
+
+              await expect(
+                page.locator('main'),
+              ).toContainText(
+                /€\s*24[,.]00/i,
               );
             },
           );
@@ -234,6 +281,16 @@ for (const shop of shops) {
 
           const cartMain =
             await openCartFromConfirmation(page);
+          
+          await test.step(
+            'Conversie-event add_to_cart controleren',
+            async () => {
+              await expectDataLayerEvent(
+                dataLayerEvents,
+                'add_to_cart',
+              );
+            },
+          );
 
           await test.step(
             'Product en aantal in winkelwagen controleren',
@@ -282,9 +339,21 @@ for (const shop of shops) {
               await openAndCheckCheckout(
                 page,
                 cartMain,
+                shop.selectors.checkoutButton,
               );
             },
           );
+
+          await test.step(
+            'Conversie-event begin_checkout controleren',
+            async () => {
+              await expectDataLayerEvent(
+                dataLayerEvents,
+                'begin_checkout',
+              );
+            },
+          );
+
         },
       );
     },

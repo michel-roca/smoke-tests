@@ -142,16 +142,26 @@ export async function assertHandlingFee(
 export async function openAndCheckCheckout(
   page: Page,
   cartMain: Locator,
-): Promise<void> {
-  const checkoutButton = cartMain.getByRole('link', {
-    name: /verder naar bestellen/i,
-  });
+  checkoutButtonSelector?: string,
+): Promise<Locator> {
+  const checkoutButton = checkoutButtonSelector
+    ? cartMain
+        .locator(checkoutButtonSelector)
+        .first()
+    : cartMain
+        .getByRole('link', {
+          name: /verder naar bestellen/i,
+        })
+        .first();
 
-  await expect(checkoutButton).toBeVisible();
+  await expect(checkoutButton).toBeVisible({
+    timeout: 15_000,
+  });
 
   await Promise.all([
     page.waitForURL(/\/checkout\//i, {
       waitUntil: 'domcontentloaded',
+      timeout: 20_000,
     }),
 
     checkoutButton.click(),
@@ -159,13 +169,21 @@ export async function openAndCheckCheckout(
 
   await expect(page).toHaveURL(/\/checkout\//i);
 
-  const checkoutMain = page.locator('main');
+  const checkoutMain = page
+    .locator('main')
+    .first();
+
+  await expect(checkoutMain).toBeVisible({
+    timeout: 15_000,
+  });
 
   await expect(
     checkoutMain.getByRole('heading', {
       name: /^bestellen$/i,
     }),
-  ).toBeVisible();
+  ).toBeVisible({
+    timeout: 15_000,
+  });
 
   await expect(checkoutMain).toContainText(
     /factuuradres/i,
@@ -178,6 +196,8 @@ export async function openAndCheckCheckout(
   await expect(checkoutMain).toContainText(
     /betaalmethoden/i,
   );
+
+  return checkoutMain;
 }
 
 /*

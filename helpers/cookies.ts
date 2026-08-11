@@ -3,9 +3,33 @@ import {
   Page,
 } from '@playwright/test';
 
+async function hideSleakIfPresent(
+  page: Page,
+): Promise<void> {
+  await page
+    .addStyleTag({
+      content: `
+        #sleak-html,
+        #sleak-html *,
+        .sleak-popup-embed-container {
+          display: none !important;
+          visibility: hidden !important;
+          pointer-events: none !important;
+        }
+      `,
+    })
+    .catch(() => {
+      /*
+       * Geen probleem wanneer de pagina net navigeert.
+       */
+    });
+}
+
 export async function acceptCookiesIfVisible(
   page: Page,
 ): Promise<void> {
+  await hideSleakIfPresent(page);
+
   const cookieBanner = page
     .locator('.wsa-cookielaw')
     .first();
@@ -17,8 +41,7 @@ export async function acceptCookiesIfVisible(
     .first();
 
   /*
-   * De cookiebanner wordt soms vertraagd geladen,
-   * vooral in WebKit en op GitHub Actions.
+   * De cookiebanner wordt soms vertraagd geladen.
    */
   const bannerAppeared = await acceptButton
     .waitFor({
@@ -33,11 +56,11 @@ export async function acceptCookiesIfVisible(
   }
 
   /*
-   * De cookie-acceptatie kan een navigatie of
-   * volledige herlaadactie veroorzaken.
+   * DOM-click bewust gebruikt omdat externe widgets
+   * zoals Sleak soms pointer-events onderscheppen.
    */
-  await acceptButton.click({
-    timeout: 10_000,
+  await acceptButton.evaluate((element) => {
+    (element as HTMLElement).click();
   });
 
   await page.waitForLoadState(

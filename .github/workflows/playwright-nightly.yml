@@ -14,9 +14,20 @@ concurrency:
 
 jobs:
   test:
-    name: ALUMINIUMvakman smoke tests
+    name: ${{ matrix.shop }} smoke tests
     timeout-minutes: 60
     runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        shop:
+          - aluminiumvakman-nl
+          - aluminiumexperte-de
+    
+    concurrency:
+      group: ${{ matrix.shop }}-production-smoke-tests
+      cancel-in-progress: false
 
     steps:
       - name: Repository ophalen
@@ -38,12 +49,12 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Playwright-tests uitvoeren
-        run: npx playwright test
+        run: SHOP=${{ matrix.shop }} npx playwright test --workers=1
 
       - name: Playwright-rapport uploaden
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v7
         with:
-          name: playwright-report-nightly-${{ github.run_id }}-${{ github.run_attempt }}
+          name: playwright-report-nightly-${{ matrix.shop }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: playwright-report/
           retention-days: 30

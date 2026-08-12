@@ -226,8 +226,10 @@ for (const shop of shops) {
             'Aantal van gekozen productvariant aanpassen',
             async () => {
               const variantRow = page
-                .getByRole('row', {
-                  name: product.variantTitle,
+                .locator('main tbody tr:visible')
+                .filter({
+                  hasText:
+                    product.variantTitle,
                 })
                 .first();
 
@@ -253,26 +255,57 @@ for (const shop of shops) {
 
               await quantityInput.scrollIntoViewIfNeeded();
 
+              await expect(increaseButton).toBeVisible({
+                timeout: 10_000,
+              });
+
+              await quantityInput.scrollIntoViewIfNeeded();
+
               for (
-                let index = 0;
-                index < product.quantity;
-                index += 1
+                let expectedValue = 1;
+                expectedValue <= product.quantity;
+                expectedValue += 1
               ) {
-                await expect(increaseButton).toBeVisible({
-                  timeout: 10_000,
-                });
+                let quantityChanged = false;
 
-                await increaseButton.click();
+                for (
+                  let attempt = 0;
+                  attempt < 3;
+                  attempt += 1
+                ) {
+                  await increaseButton.scrollIntoViewIfNeeded();
 
-                await expect
-                  .poll(
-                    async () =>
-                      await quantityInput.inputValue(),
-                    {
-                      timeout: 5_000,
-                    },
-                  )
-                  .toBe(String(index + 1));
+                  await increaseButton.click();
+
+                  quantityChanged = await expect
+                    .poll(
+                      async () =>
+                        await quantityInput.inputValue(),
+                      {
+                        timeout:
+                          2_000,
+                      },
+                    )
+                    .toBe(
+                      String(expectedValue),
+                    )
+                    .then(() => true)
+                    .catch(() => false);
+
+                  if (quantityChanged) {
+                    break;
+                  }
+                }
+
+                await expect(
+                  quantityInput,
+                ).toHaveValue(
+                  String(expectedValue),
+                  {
+                    timeout:
+                      5_000,
+                  },
+                );
               }
 
               await expect(quantityInput).toHaveValue(

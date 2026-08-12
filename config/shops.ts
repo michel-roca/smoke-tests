@@ -75,13 +75,29 @@ export type ShopConfig = {
   categoryPath: string;
   cartPath: string;
   branch: 'aluminium';
-  locale: 'nl';
+  locale: 'nl' | 'de';
 
   selectors: {
     configurator: string;
     addToCartButton: string;
     standardQuantityInput: string;
     checkoutButton: string;
+  };
+
+  texts: {
+    cart: {
+      addedToCart: RegExp;
+      goToCart: RegExp;
+    };
+
+    handlingFee: RegExp;
+
+    checkout: {
+      heading: RegExp;
+      billingAddress: RegExp;
+      shippingMethod: RegExp;
+      paymentMethods: RegExp;
+    };
   };
 
   testProducts: {
@@ -121,6 +137,33 @@ export const shops: ShopConfig[] = [
 
       checkoutButton:
         'a[href*="/checkout"]:visible, a[href*="/cart/checkout"]:visible, a:has-text("Afrekenen"):visible, button:has-text("Afrekenen"):visible',
+    },
+
+    texts: {
+      cart: {
+        addedToCart:
+          /dit product is toegevoegd aan de winkelwagen/i,
+        
+        goToCart:
+          /^(verder naar bestellen|naar de winkelwagen|bekijk de winkelwagen)$/i,
+      },
+
+      handlingFee:
+        /handelingskosten/i,
+      
+      checkout: {
+        heading:
+          /^bestellen$/i,
+        
+        billingAddress:
+          /factuuradres/i,
+        
+        shippingMethod:
+          /verzendmethode/i,
+        
+        paymentMethods:
+          /betaalmethoden/i,
+      },
     },
 
     testProducts: {

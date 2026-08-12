@@ -100,7 +100,10 @@ for (const shop of shops) {
           );
 
           const cartMain =
-            await openCartFromConfirmation(page);
+            await openCartFromConfirmation(
+              page,
+              shop.texts.cart,
+            );
           
           await test.step(
             'Conversie-event add_to_cart controleren',
@@ -172,6 +175,7 @@ for (const shop of shops) {
                 cartMain,
                 product.expectHandlingFee,
                 product.expectedHandlingFee,
+                shop.texts.handlingFee,
               );
             },
           );
@@ -183,6 +187,7 @@ for (const shop of shops) {
                 page,
                 cartMain,
                 shop.selectors.checkoutButton,
+                shop.texts.checkout,
               );
             },
           );
@@ -280,7 +285,10 @@ for (const shop of shops) {
           );
 
           const cartMain =
-            await openCartFromConfirmation(page);
+            await openCartFromConfirmation(
+              page,
+              shop.texts.cart,
+            );
           
           await test.step(
             'Conversie-event add_to_cart controleren',
@@ -329,6 +337,7 @@ for (const shop of shops) {
                 cartMain,
                 product.expectHandlingFee,
                 product.expectedHandlingFee,
+                shop.texts.handlingFee,
               );
             },
           );
@@ -340,6 +349,7 @@ for (const shop of shops) {
                 page,
                 cartMain,
                 shop.selectors.checkoutButton,
+                shop.texts.checkout,
               );
             },
           );

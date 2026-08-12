@@ -4,6 +4,18 @@ import {
   Page,
 } from '@playwright/test';
 
+export type CartTexts = {
+  addedToCart: RegExp;
+  goToCart: RegExp;
+};
+
+export type CheckoutTexts = {
+  heading: RegExp;
+  billingAddress: RegExp;
+  shippingMethod: RegExp;
+  paymentMethods: RegExp;
+};
+
 /*
  * Voert een DOM-click uit.
  *
@@ -25,17 +37,18 @@ export async function clickElementWithDom(
  */
 export async function openCartFromConfirmation(
   page: Page,
+  texts: CartTexts,
 ): Promise<Locator> {
   const confirmationMessage = page
     .getByText(
-      /dit product is toegevoegd aan de winkelwagen/i,
+      texts.addedToCart,
     )
     .first();
 
   await expect(
     confirmationMessage,
   ).toBeVisible({
-    timeout: 30_000,
+    timeout: 15_000,
   });
 
   const continueToCartButton = page
@@ -44,7 +57,7 @@ export async function openCartFromConfirmation(
     )
     .filter({
       hasText:
-        /^(verder naar bestellen|naar de winkelwagen|bekijk de winkelwagen)$/i,
+        texts.goToCart,
     })
     .first();
 
@@ -56,28 +69,26 @@ export async function openCartFromConfirmation(
 
   await Promise.all([
     page.waitForURL(
-      /\/cart\/?$/i,
+      /\/cart\//i,
       {
         timeout: 20_000,
       },
     ),
 
-    continueToCartButton.click(),
+    continueToCartButton.evaluate((element) => {
+      (element as HTMLElement).click();
+    }),
   ]);
 
-  await expect(
-    page,
-  ).toHaveURL(
-    /\/cart\/?$/i,
+  await expect(page).toHaveURL(
+    /\/cart\//i,
   );
 
   const cartMain = page
     .locator('main')
     .first();
 
-  await expect(
-    cartMain,
-  ).toBeVisible({
+  await expect(cartMain).toBeVisible({
     timeout: 15_000,
   });
 
@@ -104,35 +115,42 @@ export function getCartProductRow(
 export async function assertHandlingFee(
   cartMain: Locator,
   expected: boolean,
-  expectedPrice?: RegExp,
+  expectedPrice: RegExp | undefined,
+  handlingFeeText: RegExp,
 ): Promise<void> {
   const handlingFeeRow = cartMain
     .getByRole('row', {
-      name: /handelingskosten/i,
+      name: handlingFeeText,
     })
     .first();
 
-  if (expected) {
-    await expect(handlingFeeRow).toBeVisible();
-
-    await expect(handlingFeeRow).toContainText(
-      /handelingskosten/i,
-    );
-
-    if (expectedPrice) {
-      await expect(handlingFeeRow).toContainText(
-        expectedPrice,
-      );
-    }
+  if (!expected) {
+    await expect(
+      handlingFeeRow,
+    ).toHaveCount(0);
 
     return;
   }
 
-  /*
-   * Bij een orderwaarde boven de ingestelde drempel mag
-   * geen regel voor handelingskosten aanwezig zijn.
-   */
-  await expect(handlingFeeRow).toHaveCount(0);
+  await expect(
+    handlingFeeRow,
+  ).toBeVisible({
+    timeout: 15_000,
+  });
+
+  await expect(
+    handlingFeeRow,
+  ).toContainText(
+    handlingFeeText,
+  );
+
+  if (expectedPrice) {
+    await expect(
+      handlingFeeRow,
+    ).toContainText(
+      expectedPrice,
+    );
+  }
 }
 
 /*
@@ -142,59 +160,75 @@ export async function assertHandlingFee(
 export async function openAndCheckCheckout(
   page: Page,
   cartMain: Locator,
-  checkoutButtonSelector?: string,
+  checkoutButtonSelector: string,
+  checkoutTexts: CheckoutTexts,
 ): Promise<Locator> {
-  const checkoutButton = checkoutButtonSelector
-    ? cartMain
-        .locator(checkoutButtonSelector)
-        .first()
-    : cartMain
-        .getByRole('link', {
-          name: /verder naar bestellen/i,
-        })
-        .first();
+  const checkoutButton = cartMain
+    .locator(
+      checkoutButtonSelector,
+    )
+    .first();
 
-  await expect(checkoutButton).toBeVisible({
+  await expect(
+    checkoutButton,
+  ).toBeVisible({
     timeout: 15_000,
   });
 
   await Promise.all([
-    page.waitForURL(/\/checkout\//i, {
-      waitUntil: 'domcontentloaded',
-      timeout: 20_000,
-    }),
+    page.waitForURL(
+      /\/checkout\//i,
+      {
+        waitUntil:
+          'domcontentloaded',
+
+        timeout:
+          20_000,
+      },
+    ),
 
     checkoutButton.click(),
   ]);
 
-  await expect(page).toHaveURL(/\/checkout\//i);
+  await expect(page).toHaveURL(
+    /\/checkout\//i,
+  );
 
   const checkoutMain = page
     .locator('main')
     .first();
 
-  await expect(checkoutMain).toBeVisible({
+  await expect(
+    checkoutMain,
+  ).toBeVisible({
     timeout: 15_000,
   });
 
   await expect(
     checkoutMain.getByRole('heading', {
-      name: /^bestellen$/i,
+      name:
+        checkoutTexts.heading,
     }),
   ).toBeVisible({
     timeout: 15_000,
   });
 
-  await expect(checkoutMain).toContainText(
-    /factuuradres/i,
+  await expect(
+    checkoutMain,
+  ).toContainText(
+    checkoutTexts.billingAddress,
   );
 
-  await expect(checkoutMain).toContainText(
-    /verzendmethode/i,
+  await expect(
+    checkoutMain,
+  ).toContainText(
+    checkoutTexts.shippingMethod,
   );
 
-  await expect(checkoutMain).toContainText(
-    /betaalmethoden/i,
+  await expect(
+    checkoutMain,
+  ).toContainText(
+    checkoutTexts.paymentMethods,
   );
 
   return checkoutMain;

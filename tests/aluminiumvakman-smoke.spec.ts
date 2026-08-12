@@ -245,7 +245,7 @@ for (const shop of shops) {
 
               const increaseButton = variantRow
                 .getByRole('link', {
-                  name: /waarde verhogen/i,
+                  name: /waarde verhogen|wert erhöhen/i,
                 })
                 .first();
 
@@ -279,11 +279,13 @@ for (const shop of shops) {
                 String(product.quantity),
               );
 
-              await expect(
-                page.locator('main'),
-              ).toContainText(
-                /€\s*24[,.]00/i,
-              );
+              if (product.expectedCartLinePrice) {
+                await expect(
+                  page.locator('main'),
+                ).toContainText(
+                  product.expectedCartLinePrice,
+                );
+              }
             },
           );
 

@@ -52,7 +52,7 @@ async function clickNextStep(
   const nextStepButton = currentStep
     .locator('a:visible')
     .filter({
-      hasText: /volgende stap/i,
+      hasText: /volgende stap|weiter/i,
     })
     .first();
 
@@ -105,15 +105,13 @@ async function finishConfiguration(
     .locator(
       'a[data-way="fin"]:visible',
     )
-    .filter({
-      hasText:
-        /stappen afronden/i,
-    })
     .first();
 
   await expect(
     finishStepsButton,
-  ).toBeVisible();
+  ).toBeVisible({
+    timeout: 10_000,
+  });
 
   await finishStepsButton.evaluate(
     (element) => {

@@ -314,6 +314,190 @@ const allShops: ShopConfig[] = [
       },
     },
   },
+  {
+    id:
+      'aluminiumexperte-de',
+
+    name:
+      'AluminiumExperte.de',
+
+    baseUrl:
+      'https://www.aluminiumexperte.de',
+
+    categoryPath:
+      '/aluprofile/aluwinkel/alu-winkelprofil-gleichschenklig/',
+
+    cartPath:
+      '/cart/',
+
+    branch:
+      'aluminium',
+
+    locale:
+      'de',
+
+    selectors: {
+      configurator:
+        'main .product-configure-module:visible',
+
+      addToCartButton:
+        'main a.add-cart.cart-btn:visible',
+
+      standardQuantityInput:
+        'main input[name="quantity"]:visible',
+
+      checkoutButton:
+        'a[href*="/checkout"]:visible, a[href*="/cart/checkout"]:visible, a:has-text("Zur Kasse"):visible, a:has-text("Weiter zur Bestellung"):visible, button:has-text("Zur Kasse"):visible',
+    },
+
+    texts: {
+      cart: {
+        addedToCart:
+          /dieses produkt wurde in den warenkorb gelegt|wurde.*warenkorb|zum warenkorb hinzugefügt|in den warenkorb/i,
+
+        goToCart:
+          /^(weiter zur bestellung|weiter zur kasse|zum warenkorb|warenkorb ansehen|zur kasse)$/i,
+      },
+
+      handlingFee:
+        /bearbeitungskosten|mindermengenzuschlag|handlungskosten|mindermenge/i,
+
+      checkout: {
+        heading:
+          /^(bestellen|kasse)$/i,
+
+        billingAddress:
+          /rechnungsadresse/i,
+
+        shippingMethod:
+          /versandart|versandmethode/i,
+
+        paymentMethods:
+          /zahlungsart|zahlungsmethoden|zahlungsweisen/i,
+      },
+    },
+
+    testProducts: {
+      configurable: {
+        type:
+          'configurable',
+
+        sku:
+          'hoek-30x30x2-ral9004',
+
+        path:
+          '/alu-winkelprofil-schwarz-30-x-30-x-2-mm.html',
+
+        pageTitle:
+          /alu winkelprofil.*30\s*x\s*30\s*x\s*2\s*mm/i,
+
+        cartTitle:
+          /alu winkelprofil.*30\s*x\s*30\s*x\s*2\s*mm/i,
+
+        expectedUnitPrice:
+          /29[,.]90\s*€/i,
+
+        expectHandlingFee:
+          true,
+
+        expectedHandlingFee:
+          /17[,.]95\s*€/i,
+
+        steps: [
+          {
+            type:
+              'text',
+
+            stepTitle:
+              /länge/i,
+
+            fieldName:
+              /länge/i,
+
+            value:
+              '100',
+
+            expectedCartText:
+              /länge:\s*100/i,
+          },
+
+          {
+            type:
+              'choice',
+
+            stepTitle:
+              /ral|farbe/i,
+
+            optionImageName:
+              /ral\s+9005/i,
+
+            expectedCartText:
+              /ral\s+9005/i,
+          },
+
+          {
+            type:
+              'choice',
+
+            stepTitle:
+              /beschichtung|innen|außen/i,
+
+            optionText:
+              /innen|standard/i,
+
+            expectedCartText:
+              /innen|standard/i,
+          },
+
+          {
+            type:
+              'choice',
+
+            stepTitle:
+              /schnittoption|schnitt/i,
+
+            optionImageName:
+              /^gerade \(standard\)$/i,
+
+            expectedCartText:
+              /gerade \(standard\)|gerade/i,
+          },
+        ],
+      },
+
+      standard: {
+        type:
+          'standard',
+
+        sku:
+          'Lakstift-9016',
+
+        path:
+          '/lackstift-zum-pulverbeschichtung-20-ml-lack.html',
+
+        pageTitle:
+          /lackstift.*20 ml/i,
+
+        cartTitle:
+          /lackstift.*20 ml/i,
+
+        variantTitle:
+          /ral\s*9005.*schwarz/i,
+
+        quantity:
+          2,
+
+        expectedUnitPrice:
+          /12[,.]00\s*€/i,
+
+        expectHandlingFee:
+          true,
+
+        expectedHandlingFee:
+          /17[,.]95\s*€/i,
+      },
+    },
+  },
 ];
 
 const selectedShop =

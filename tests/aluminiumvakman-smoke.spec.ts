@@ -251,12 +251,28 @@ for (const shop of shops) {
 
               await expect(increaseButton).toBeVisible();
 
+              await quantityInput.scrollIntoViewIfNeeded();
+
               for (
                 let index = 0;
                 index < product.quantity;
                 index += 1
               ) {
+                await expect(increaseButton).toBeVisible({
+                  timeout: 10_000,
+                });
+
                 await increaseButton.click();
+
+                await expect
+                  .poll(
+                    async () =>
+                      await quantityInput.inputValue(),
+                    {
+                      timeout: 5_000,
+                    },
+                  )
+                  .toBe(String(index + 1));
               }
 
               await expect(quantityInput).toHaveValue(

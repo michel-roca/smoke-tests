@@ -70,6 +70,7 @@ export type StandardTestProduct =
   };
 
 export type ShopConfig = {
+  id: string,
   name: string;
   baseUrl: string;
   categoryPath: string;
@@ -106,9 +107,13 @@ export type ShopConfig = {
   };
 };
 
-export const shops: ShopConfig[] = [
+const allShops: ShopConfig[] = [
   {
-    name: 'ALUMINIUMvakman.nl',
+    id:
+      'aluminiumvakman-nl',
+
+    name:
+      'ALUMINIUMvakman.nl',
 
     baseUrl:
       'https://www.aluminiumvakman.nl',
@@ -310,3 +315,23 @@ export const shops: ShopConfig[] = [
     },
   },
 ];
+
+const selectedShop =
+  process.env.SHOP;
+
+export const shops =
+  selectedShop 
+    ? allShops.filter(
+      (shop) =>
+        shop.id === selectedShop
+    )
+  : allShops;
+
+if (
+  selectedShop &&
+  shops.length === 0
+) {
+  throw new Error(
+    `Geen shopconfig gevonden voor SHOP="${selectedShop}".`,
+  );
+}

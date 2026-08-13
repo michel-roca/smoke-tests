@@ -24,6 +24,10 @@ import {
 } from '../helpers/configurator';
 
 import {
+  completeCheckoutUntilSubmitEnabled,
+} from '../helpers/checkout';
+
+import {
   expectDataLayerEvent,
   installDataLayerTracker,
 } from '../helpers/analytics';
@@ -393,10 +397,10 @@ for (const shop of shops) {
             },
           );
 
-          await test.step(
+          const checkoutMain = await test.step(
             'Checkout openen',
             async () => {
-              await openAndCheckCheckout(
+              return await openAndCheckCheckout(
                 page,
                 cartMain,
                 shop.selectors.checkoutButton,
@@ -411,6 +415,19 @@ for (const shop of shops) {
               await expectDataLayerEvent(
                 dataLayerEvents,
                 'begin_checkout',
+                20_000,
+              );
+            },
+          );
+
+          await test.step(
+            'Checkout kan tot aan actieve bestelknop worden doorlopen',
+            async () => {
+              await completeCheckoutUntilSubmitEnabled(
+                page,
+                checkoutMain,
+                shop.checkoutFlow.texts,
+                shop.checkoutFlow.customer,
               );
             },
           );

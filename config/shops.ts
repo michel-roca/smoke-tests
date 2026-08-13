@@ -1,3 +1,8 @@
+import type {
+  CheckoutCustomer,
+  CheckoutFlowTexts,
+} from '../helpers/checkout';
+
 export type BaseTestProduct = {
   sku: string;
   path: string;
@@ -86,6 +91,14 @@ export type ShopConfig = {
   };
 
   texts: {
+    configurator: {
+      nextStep: RegExp;
+    };
+
+    product: {
+      increaseQuantity: RegExp;
+    };
+
     cart: {
       addedToCart: RegExp;
       goToCart: RegExp;
@@ -99,6 +112,11 @@ export type ShopConfig = {
       shippingMethod: RegExp;
       paymentMethods: RegExp;
     };
+  };
+
+  checkoutFlow: {
+    customer: CheckoutCustomer;
+    texts: CheckoutFlowTexts;
   };
 
   testProducts: {
@@ -145,6 +163,16 @@ const allShops: ShopConfig[] = [
     },
 
     texts: {
+      configurator: {
+        nextStep:
+          /volgende stap/i,
+      },
+
+      product: {
+        increaseQuantity:
+          /waarde verhogen/i,
+      },
+
       cart: {
         addedToCart:
           /dit product is toegevoegd aan de winkelwagen/i,
@@ -168,6 +196,81 @@ const allShops: ShopConfig[] = [
         
         paymentMethods:
           /betaalmethoden/i,
+      },
+    },
+
+    checkoutFlow: {
+      customer: {
+        email:
+          'test+playwright@rocaonline.nl',
+
+        firstName:
+          'Playwright',
+
+        lastName:
+          'Test',
+
+        postalCode:
+          '5804AN',
+
+        houseNumber:
+          '10',
+
+        street:
+          'Teststraat',
+
+        city:
+          'Venray',
+
+        phone:
+          '0612345678',
+      },
+
+      texts: {
+        fields: {
+          email:
+            /^e-?mail:\s*\*?$/i,
+
+          firstName:
+            /^voornaam:\s*\*?$/i,
+
+          lastName:
+            /^achternaam:\s*\*?$/i,
+
+          postalCode:
+            /^postcode:\s*\*?$/i,
+
+          houseNumber:
+            /^nr:\s*\*?$|^huisnummer:\s*\*?$/i,
+
+          street:
+            /^straatnaam:\s*\*?$|^straat:\s*\*?$/i,
+
+          city:
+            /^plaats:\s*\*?$|^woonplaats:\s*\*?$/i,
+
+          phone:
+            /^telefoon:\s*\*?$/i,
+        },
+
+        buttons: {
+          continue:
+            /doorgaan|verder|volgende/i,
+
+          submitOrder:
+            /kopen|bestelling plaatsen|afrekenen|plaats bestelling/i,
+        },
+
+        sections: {
+          shippingMethod:
+            /verzendmethode/i,
+
+          paymentMethod:
+            /betaalmethode|betaalmethoden/i,
+        },
+
+        terms:
+          /algemene voorwaarden|voorwaarden/i,
       },
     },
 
@@ -351,6 +454,16 @@ const allShops: ShopConfig[] = [
     },
 
     texts: {
+      configurator: {
+        nextStep:
+          /weiter|nächster schritt/i,
+      },
+
+      product: {
+        increaseQuantity:
+          /wert erhöhen|menge erhöhen/i,
+      },
+
       cart: {
         addedToCart:
           /dieses produkt wurde in den warenkorb gelegt|wurde.*warenkorb|zum warenkorb hinzugefügt|in den warenkorb/i,
@@ -374,6 +487,81 @@ const allShops: ShopConfig[] = [
 
         paymentMethods:
           /zahlungsart|zahlungsmethoden|zahlungsweisen/i,
+      },
+    },
+
+    checkoutFlow: {
+      customer: {
+        email:
+          'test+playwright@rocaonline.nl',
+
+        firstName:
+          'Playwright',
+
+        lastName:
+          'Test',
+
+        postalCode:
+          '47533',
+
+        houseNumber:
+          '10',
+
+        street:
+          'Teststraße',
+
+        city:
+          'Kleve',
+
+        phone:
+          '015123456789',
+      },
+
+      texts: {
+        fields: {
+          email:
+            /^e-mail:\s*\*?$/i,
+
+          firstName:
+            /^vorname:\s*\*?$/i,
+
+          lastName:
+            /^nachname:\s*\*?$/i,
+
+          postalCode:
+            /^postleitzahl:\s*\*?$|^plz:\s*\*?$/i,
+
+          houseNumber:
+            /^nr:\s*\*?$|^hausnummer:\s*\*?$/i,
+
+          street:
+            /^straßenname:\s*\*?$|^strassenname:\s*\*?$|^straße:\s*\*?$|^strasse:\s*\*?$/i,
+
+          city:
+            /^ort:\s*\*?$|^stadt:\s*\*?$/i,
+
+          phone:
+            /^telefon:\s*\*?$/i,
+        },
+
+        buttons: {
+          continue:
+            /weiter|fortfahren/i,
+
+          submitOrder:
+            /zahlungspflichtig bestellen|bestellung abschließen|kaufen/i,
+        },
+
+        sections: {
+          shippingMethod:
+            /versandart|versandmethode/i,
+
+          paymentMethod:
+            /zahlungsart|zahlungsmethode|zahlungsweise/i,
+        },
+
+        terms:
+          /allgemeine geschäftsbedingungen|agb/i,
       },
     },
 

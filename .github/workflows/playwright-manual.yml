@@ -4,35 +4,24 @@ on:
   workflow_dispatch:
     inputs:
       shop:
-        description: 'Welke shop wil je testen?'
-          required: true
-            default: 'aluminiumvakman-nl'
-            type: choice
-            options:
-              - aluminiumvakman-nl
-              - aluminiumexperte-de
-
-          browser:
-            description: 'Welke browser wil je gebruiken?'
-            required: true
-            default: 'chromium'
-            type: choice
-            options:
-              - chromium
-              - firefox
-              - webkit
-              - all
+        description: Welke shop wil je testen?
+        required: true
+        default: aluminiumvakman-nl
+        type: choice
+        options:
+          - aluminiumvakman-nl
+          - aluminiumexperte-de
 
 permissions:
   contents: read
 
 concurrency:
-  group: playwright-manual-${{ inputs.shop }}-${{ inputs.browser }}
+  group: playwright-manual-${{ github.ref }}-${{ inputs.shop }}
   cancel-in-progress: false
 
 jobs:
   test:
-    name: ${{ inputs.shop }} - ${{ inputs.browser }}
+    name: ${{ inputs.shop }} smoke tests
     timeout-minutes: 60
     runs-on: ubuntu-latest
 
@@ -56,18 +45,12 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Playwright-tests uitvoeren
-        shell: bash
-        run: |
-          if [ "${{ inputs.browser }}" = "all" ]; then
-            SHOP=${{ inputs.shop }} npx playwright test --workers=1
-          else
-            SHOP=${{ inputs.shop }} npx playwright test --project=${{ inputs.browser }} --workers=1
-          fi
+        run: SHOP=${{ inputs.shop }} npx playwright test --project=chromium --workers=1
 
       - name: Playwright-rapport uploaden
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v7
         with:
-          name: playwright-report-manual-${{ inputs.shop }}-${{ inputs.browser }}-${{ github.run_id }}-${{ github.run_attempt }}
+          name: playwright-report-manual-${{ inputs.shop }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: playwright-report/
           retention-days: 30

@@ -173,7 +173,7 @@ for (const shop of shops) {
           );
 
           await test.step(
-            'Handelingskosten controleren',
+            'Cartregels controleren',
             async () => {
               await assertHandlingFee(
                 cartMain,

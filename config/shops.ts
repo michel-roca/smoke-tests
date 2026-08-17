@@ -80,7 +80,13 @@ export type ShopConfig = {
   baseUrl: string;
   categoryPath: string;
   cartPath: string;
-  branch: 'aluminium';
+  branch:
+  | 'aluminium'
+  | 'hout'
+  | 'eiken'
+  | 'natuursteen'
+  | 'leuning'
+  | 'staal';
   locale: 'nl' | 'de';
 
   selectors: {

@@ -39,57 +39,58 @@ export async function openCartFromConfirmation(
   page: Page,
   texts: CartTexts,
 ): Promise<Locator> {
-  const confirmationMessage = page
-    .getByText(
-      texts.addedToCart,
-    )
+  const confirmationDialog = page
+    .getByRole('dialog')
+    .filter({
+      hasText:
+        texts.addedToCart,
+    })
     .first();
 
   await expect(
-    confirmationMessage,
+    confirmationDialog,
   ).toBeVisible({
-    timeout: 15_000,
+    timeout:
+      15_000,
   });
 
-  const continueToCartButton = page
-    .locator(
-      'a:visible, button:visible',
-    )
-    .filter({
-      hasText:
+  const goToCartLink = confirmationDialog
+    .getByRole('link', {
+      name:
         texts.goToCart,
     })
     .first();
 
   await expect(
-    continueToCartButton,
+    goToCartLink,
   ).toBeVisible({
-    timeout: 15_000,
+    timeout:
+      10_000,
   });
 
-  await Promise.all([
-    page.waitForURL(
-      /\/cart\//i,
-      {
-        timeout: 20_000,
-      },
-    ),
+  await clickElementWithDom(
+    goToCartLink,
+  );
 
-    continueToCartButton.evaluate((element) => {
-      (element as HTMLElement).click();
-    }),
-  ]);
-
-  await expect(page).toHaveURL(
+  await expect(
+    page,
+  ).toHaveURL(
     /\/cart\//i,
+    {
+      timeout:
+        15_000,
+    },
   );
 
   const cartMain = page
     .locator('main')
     .first();
 
-  await expect(cartMain).toBeVisible({
-    timeout: 15_000,
+  await expect(
+    cartMain,
+  ).toBeVisible({
+    timeout:
+      15_000,
   });
 
   return cartMain;

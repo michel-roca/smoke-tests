@@ -36,404 +36,466 @@ for (const shop of shops) {
   test.describe(
     `${shop.name} smoke tests`,
     () => {
-      test(
-        'configurabel testproduct kan worden geconfigureerd en besteld',
-        async ({ page }) => {
-          const product =
-            shop.testProducts.configurable;
 
-          await test.step(
-            'Productpagina openen',
-            async () => {
-              await page.goto(
-                shop.baseUrl + product.path,
-              );
+      const configurableProduct =
+        shop.testProducts.configurable;
 
-              await acceptCookiesIfVisible(
-                page,
-              );
+      const standardProduct =
+        shop.testProducts.standard;
 
-              await expect(
-                page.locator('h1'),
-              ).toContainText(
-                product.pageTitle,
-              );
-            },
-          );
+      if (configurableProduct) {
+        test(
+          'configurabel testproduct kan worden geconfigureerd en besteld',
+          async ({ page }) => {
+            const product =
+              configurableProduct;
 
-          const dataLayerEvents =
-            await installDataLayerTracker(page);
+            await test.step(
+              'Productpagina openen',
+              async () => {
+                await page.goto(
+                  shop.baseUrl + product.path,
+                );
 
-          const configurator = page
-            .locator(
-              shop.selectors.configurator,
-            )
-            .first();
+                await acceptCookiesIfVisible(
+                  page,
+                );
 
-          await test.step(
-            'Alle configuratiestappen doorlopen',
-            async () => {
-              await expect(
-                configurator,
-              ).toBeVisible({
-                timeout: 15_000,
-              });
-
-              await runConfigurator(
-                configurator,
-                product.steps,
-              );
-            },
-          );
-
-          await test.step(
-            'Product toevoegen aan cart',
-            async () => {
-              const addToCartButton =
-                page
-                  .locator(
-                    shop.selectors
-                      .addToCartButton,
-                  )
-                  .first();
-
-              await clickElementWithDom(
-                addToCartButton,
-              );
-            },
-          );
-
-          const cartMain =
-            await openCartFromConfirmation(
-              page,
-              shop.texts.cart,
+                await expect(
+                  page.locator('h1'),
+                ).toContainText(
+                  product.pageTitle,
+                );
+              },
             );
-          
-          await test.step(
-            'Conversie-event add_to_cart controleren',
-            async () => {
-              await expectDataLayerEvent(
-                dataLayerEvents,
-                'add_to_cart',
-              );
-            },
-          );
 
-          await test.step(
-            'Product en configuratie in cart controleren',
-            async () => {
-              const productRow =
-                getCartProductRow(
-                  cartMain,
+            const dataLayerEvents =
+              await installDataLayerTracker(page);
+
+            const configurator = page
+              .locator(
+                shop.selectors.configurator,
+              )
+              .first();
+
+            await test.step(
+              'Alle configuratiestappen doorlopen',
+              async () => {
+                await expect(
+                  configurator,
+                ).toBeVisible({
+                  timeout: 15_000,
+                });
+
+                await runConfigurator(
+                  configurator,
+                  product.steps,
+                );
+              },
+            );
+
+            await test.step(
+              'Product toevoegen aan cart',
+              async () => {
+                const addToCartButton =
+                  page
+                    .locator(
+                      shop.selectors
+                        .addToCartButton,
+                    )
+                    .first();
+
+                await clickElementWithDom(
+                  addToCartButton,
+                );
+              },
+            );
+
+            const cartMain =
+              await openCartFromConfirmation(
+                page,
+                shop.texts.cart,
+              );
+            
+            await test.step(
+              'Conversie-event add_to_cart controleren',
+              async () => {
+                await expectDataLayerEvent(
+                  dataLayerEvents,
+                  'add_to_cart',
+                );
+              },
+            );
+
+            await test.step(
+              'Product en configuratie in cart controleren',
+              async () => {
+                const productRow =
+                  getCartProductRow(
+                    cartMain,
+                    product.cartTitle,
+                  );
+
+                await expect(
+                  productRow,
+                ).toBeVisible();
+
+                await expect(
+                  productRow,
+                ).toContainText(
                   product.cartTitle,
                 );
 
-              await expect(
-                productRow,
-              ).toBeVisible();
+                /*
+                * Alle verwachte configuratiewaarden controleren:
+                *
+                * - lengte
+                * - RAL-kleur
+                * - coating
+                * - zaagsnede
+                */
+                for (
+                  const step of product.steps
+                ) {
+                  await expect(
+                    productRow,
+                  ).toContainText(
+                    step.expectedCartText,
+                  );
+                }
 
-              await expect(
-                productRow,
-              ).toContainText(
-                product.cartTitle,
-              );
+                /*
+                * Prijs alleen controleren wanneer deze
+                * in shops.ts is ingesteld.
+                */
+                if (
+                  product.expectedUnitPrice
+                ) {
+                  await expect(
+                    productRow,
+                  ).toContainText(
+                    product.expectedUnitPrice,
+                  );
+                }
+              },
+            );
 
-              /*
-               * Alle verwachte configuratiewaarden controleren:
-               *
-               * - lengte
-               * - RAL-kleur
-               * - coating
-               * - zaagsnede
-               */
-              for (
-                const step of product.steps
-              ) {
-                await expect(
-                  productRow,
-                ).toContainText(
-                  step.expectedCartText,
+            await test.step(
+              'Cartregels controleren',
+              async () => {
+                await assertHandlingFee(
+                  cartMain,
+                  product.expectHandlingFee,
+                  product.expectedHandlingFee,
+                  shop.texts.handlingFee,
                 );
-              }
+              },
+            );
 
-              /*
-               * Prijs alleen controleren wanneer deze
-               * in shops.ts is ingesteld.
-               */
-              if (
-                product.expectedUnitPrice
-              ) {
+            await test.step(
+              'Checkout openen',
+              async () => {
+                await openAndCheckCheckout(
+                  page,
+                  cartMain,
+                  shop.selectors.checkoutButton,
+                  shop.texts.checkout,
+                );
+              },
+            );
+
+            await test.step(
+              'Conversie-event begin_checkout controleren',
+              async () => {
+                await expectDataLayerEvent(
+                  dataLayerEvents,
+                  'begin_checkout',
+                );
+              },
+            );
+
+          },
+        );
+      }
+      
+      if (standardProduct) {
+        test(
+          'standaard testproduct kan met aangepast aantal aan cart worden toegevoegd',
+          async ({ page }) => {
+            const product = standardProduct;
+
+            await test.step('Productpagina openen', async () => {
+              await page.goto(shop.baseUrl + product.path);
+              await acceptCookiesIfVisible(page);
+
+              await expect(page.locator('h1')).toContainText(
+                product.pageTitle,
+              );
+            });
+
+            const dataLayerEvents =
+              await installDataLayerTracker(page);
+
+            const variantRow = await test.step(
+              'Variantregel zoeken',
+              async () => {
+                const row = page
+                  .locator('main tbody tr:visible')
+                  .filter({
+                    hasText:
+                      product.variantTitle,
+                  })
+                  .first();
+
                 await expect(
-                  productRow,
+                  row,
+                ).toBeVisible({
+                  timeout:
+                    10_000,
+                });
+
+                await expect(
+                  row,
                 ).toContainText(
                   product.expectedUnitPrice,
                 );
-              }
-            },
-          );
 
-          await test.step(
-            'Cartregels controleren',
-            async () => {
-              await assertHandlingFee(
-                cartMain,
-                product.expectHandlingFee,
-                product.expectedHandlingFee,
-                shop.texts.handlingFee,
-              );
-            },
-          );
-
-          await test.step(
-            'Checkout openen',
-            async () => {
-              await openAndCheckCheckout(
-                page,
-                cartMain,
-                shop.selectors.checkoutButton,
-                shop.texts.checkout,
-              );
-            },
-          );
-
-          await test.step(
-            'Conversie-event begin_checkout controleren',
-            async () => {
-              await expectDataLayerEvent(
-                dataLayerEvents,
-                'begin_checkout',
-              );
-            },
-          );
-
-        },
-      );
-
-      test(
-        'standaard testproduct kan met aangepast aantal aan cart worden toegevoegd',
-        async ({ page }) => {
-          const product = shop.testProducts.standard;
-
-          await test.step('Productpagina openen', async () => {
-            await page.goto(shop.baseUrl + product.path);
-            await acceptCookiesIfVisible(page);
-
-            await expect(page.locator('h1')).toContainText(
-              product.pageTitle,
+                return row;
+              },
             );
-          });
 
-          const dataLayerEvents =
-            await installDataLayerTracker(page);
+            await test.step(
+              'Aantal van gekozen productvariant aanpassen',
+              async () => {
+                const quantityInput = variantRow
+                  .getByRole('textbox')
+                  .last();
 
-          await test.step(
-            'Aantal van gekozen productvariant aanpassen',
-            async () => {
-              const variantRow = page
-                .locator('main tbody tr:visible')
-                .filter({
-                  hasText:
-                    product.variantTitle,
-                })
-                .first();
+                await expect(
+                  quantityInput,
+                ).toBeVisible({
+                  timeout:
+                    10_000,
+                });
 
-              await expect(variantRow).toBeVisible();
+                const increaseButton = variantRow
+                  .getByRole('link', {
+                    name:
+                      /waarde verhogen|wert erhöhen/i,
+                  })
+                  .first();
 
-              await expect(variantRow).toContainText(
-                product.expectedUnitPrice,
-              );
+                await expect(
+                  increaseButton,
+                ).toBeVisible({
+                  timeout:
+                    10_000,
+                });
 
-              const quantityInput = variantRow
-                .getByRole('textbox')
-                .first();
-
-              await expect(quantityInput).toBeVisible();
-
-              const increaseButton = variantRow
-                .getByRole('link', {
-                  name: /waarde verhogen|wert erhöhen/i,
-                })
-                .first();
-
-              await expect(increaseButton).toBeVisible();
-
-              await quantityInput.scrollIntoViewIfNeeded();
-
-              await expect(increaseButton).toBeVisible({
-                timeout: 10_000,
-              });
-
-              await quantityInput.scrollIntoViewIfNeeded();
-
-              for (
-                let expectedValue = 1;
-                expectedValue <= product.quantity;
-                expectedValue += 1
-              ) {
-                let quantityChanged = false;
+                await quantityInput.scrollIntoViewIfNeeded();
 
                 for (
-                  let attempt = 0;
-                  attempt < 3;
-                  attempt += 1
+                  let expectedValue = 1;
+                  expectedValue <= product.quantity;
+                  expectedValue += 1
                 ) {
-                  await increaseButton.scrollIntoViewIfNeeded();
+                  let quantityChanged = false;
 
-                  await increaseButton.click();
+                  for (
+                    let attempt = 0;
+                    attempt < 3;
+                    attempt += 1
+                  ) {
+                    await increaseButton.scrollIntoViewIfNeeded();
 
-                  quantityChanged = await expect
-                    .poll(
-                      async () =>
-                        await quantityInput.inputValue(),
-                      {
-                        timeout:
-                          2_000,
-                      },
-                    )
-                    .toBe(
-                      String(expectedValue),
-                    )
-                    .then(() => true)
-                    .catch(() => false);
+                    await increaseButton.click();
 
-                  if (quantityChanged) {
-                    break;
+                    quantityChanged = await expect
+                      .poll(
+                        async () =>
+                          await quantityInput.inputValue(),
+                        {
+                          timeout:
+                            2_000,
+                        },
+                      )
+                      .toBe(
+                        String(expectedValue),
+                      )
+                      .then(() => true)
+                      .catch(() => false);
+
+                    if (quantityChanged) {
+                      break;
+                    }
                   }
+
+                  await expect(
+                    quantityInput,
+                  ).toHaveValue(
+                    String(expectedValue),
+                    {
+                      timeout:
+                        5_000,
+                    },
+                  );
                 }
 
                 await expect(
                   quantityInput,
                 ).toHaveValue(
-                  String(expectedValue),
-                  {
-                    timeout:
-                      5_000,
-                  },
+                  String(product.quantity),
                 );
-              }
 
-              await expect(quantityInput).toHaveValue(
-                String(product.quantity),
-              );
-
-              if (product.expectedCartLinePrice) {
-                await expect(
-                  page.locator('main'),
-                ).toContainText(
-                  product.expectedCartLinePrice,
-                );
-              }
-            },
-          );
-
-          await test.step(
-            'Product toevoegen aan winkelwagen',
-            async () => {
-              const addToCartButton = page
-                .locator(shop.selectors.addToCartButton)
-                .first();
-
-              await clickElementWithDom(
-                addToCartButton,
-              );
-            },
-          );
-
-          const cartMain =
-            await openCartFromConfirmation(
-              page,
-              shop.texts.cart,
+                if (product.expectedCartLinePrice) {
+                  await expect(
+                    page.locator('main'),
+                  ).toContainText(
+                    product.expectedCartLinePrice,
+                  );
+                }
+              },
             );
-          
-          await test.step(
-            'Conversie-event add_to_cart controleren',
-            async () => {
-              await expectDataLayerEvent(
-                dataLayerEvents,
-                'add_to_cart',
-              );
-            },
-          );
 
-          await test.step(
-            'Product en aantal in winkelwagen controleren',
-            async () => {
-              const productRow = getCartProductRow(
-                cartMain,
-                product.cartTitle,
-              );
+            await test.step(
+              'Product toevoegen aan winkelwagen',
+              async () => {
+                const rowAddToCartButton = variantRow
+                  .locator(shop.selectors.addToCartButton)
+                  .first();
 
-              await expect(productRow).toBeVisible();
+                const buttonIsInsideVariantRow =
+                  await rowAddToCartButton
+                    .waitFor({
+                      state:
+                        'visible',
 
-              await expect(productRow).toContainText(
-                product.cartTitle,
-              );
+                      timeout:
+                        1_000,
+                    })
+                    .then(() => true)
+                    .catch(() => false);
 
-              const cartQuantityInput = productRow
-                .getByRole('textbox')
-                .first();
+                const addToCartButton =
+                  buttonIsInsideVariantRow
+                    ? rowAddToCartButton
+                    : page
+                        .locator('main')
+                        .getByRole('link', {
+                          name:
+                            /in mijn winkelwagen|in den warenkorb/i,
+                        })
+                        .first();
 
-              await expect(cartQuantityInput).toHaveValue(
-                String(product.quantity),
-              );
+                await expect(
+                  addToCartButton,
+                ).toBeVisible({
+                  timeout:
+                    10_000,
+                });
 
-              if (product.expectedCartLinePrice) {
-                await expect(productRow).toContainText(
-                  product.expectedCartLinePrice,
+                await clickElementWithDom(
+                  addToCartButton,
                 );
-              }
-            },
-          );
+              },
+            );
 
-          await test.step(
-            'Handelingskosten controleren',
-            async () => {
-              await assertHandlingFee(
-                cartMain,
-                product.expectHandlingFee,
-                product.expectedHandlingFee,
-                shop.texts.handlingFee,
-              );
-            },
-          );
-
-          const checkoutMain = await test.step(
-            'Checkout openen',
-            async () => {
-              return await openAndCheckCheckout(
+            const cartMain =
+              await openCartFromConfirmation(
                 page,
-                cartMain,
-                shop.selectors.checkoutButton,
-                shop.texts.checkout,
+                shop.texts.cart,
               );
-            },
-          );
+            
+            await test.step(
+              'Conversie-event add_to_cart controleren',
+              async () => {
+                await expectDataLayerEvent(
+                  dataLayerEvents,
+                  'add_to_cart',
+                );
+              },
+            );
 
-          await test.step(
-            'Conversie-event begin_checkout controleren',
-            async () => {
-              await expectDataLayerEvent(
-                dataLayerEvents,
-                'begin_checkout',
-                20_000,
-              );
-            },
-          );
+            await test.step(
+              'Product en aantal in winkelwagen controleren',
+              async () => {
+                const productRow = getCartProductRow(
+                  cartMain,
+                  product.cartTitle,
+                );
 
-          await test.step(
-            'Checkout kan tot aan actieve bestelknop worden doorlopen',
-            async () => {
-              await completeCheckoutUntilSubmitEnabled(
-                page,
-                checkoutMain,
-                shop.checkoutFlow.texts,
-                shop.checkoutFlow.customer,
-              );
-            },
-          );
+                await expect(productRow).toBeVisible();
 
-        },
-      );
+                await expect(productRow).toContainText(
+                  product.cartTitle,
+                );
+
+                const cartQuantityInput = productRow
+                  .getByRole('textbox')
+                  .first();
+
+                await expect(cartQuantityInput).toHaveValue(
+                  String(product.quantity),
+                );
+
+                if (product.expectedCartLinePrice) {
+                  await expect(productRow).toContainText(
+                    product.expectedCartLinePrice,
+                  );
+                }
+              },
+            );
+
+            await test.step(
+              'Cartregels controleren',
+              async () => {
+                await assertHandlingFee(
+                  cartMain,
+                  product.expectHandlingFee,
+                  product.expectedHandlingFee,
+                  shop.texts.handlingFee,
+                );
+              },
+            );
+
+            const checkoutMain = await test.step(
+              'Checkout openen',
+              async () => {
+                return await openAndCheckCheckout(
+                  page,
+                  cartMain,
+                  shop.selectors.checkoutButton,
+                  shop.texts.checkout,
+                );
+              },
+            );
+
+            await test.step(
+              'Conversie-event begin_checkout controleren',
+              async () => {
+                await expectDataLayerEvent(
+                  dataLayerEvents,
+                  'begin_checkout',
+                  20_000,
+                );
+              },
+            );
+
+            await test.step(
+              'Checkout kan tot aan actieve bestelknop worden doorlopen',
+              async () => {
+                await completeCheckoutUntilSubmitEnabled(
+                  page,
+                  checkoutMain,
+                  shop.checkoutFlow.texts,
+                  shop.checkoutFlow.customer,
+                );
+              },
+            );
+
+          },
+        );
+      }
     },
   );
 }

@@ -1,1 +1,13 @@
-# playwright-demo
+Deze smoke test controleert per shop:
+- productpagina bereikbaar
+- configureerbaar product kan worden geconfigureerd
+- standaardproduct kan met aangepast aantal worden toegevoegd
+- add_to_cart-event wordt gemeten
+- winkelwagen toont product, aantal, configuratie en kosten correct
+- handelingskosten onder €75 worden toegevoegd
+- checkout wordt geopend
+- begin_checkout-event wordt gemeten
+- checkoutvelden kunnen worden ingevuld
+- verzendmethode en betaalmethode kunnen worden geselecteerd
+- definitieve bestelknop is zichtbaar en actief
+- de test plaatst géén echte bestelling

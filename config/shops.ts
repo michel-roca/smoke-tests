@@ -74,14 +74,42 @@ export type StandardTestProduct =
     expectedCartLinePrice?: RegExp;
   };
 
+export type CartPolicy =
+  | {
+      type: 'handlingFee';
+      label: RegExp;
+    }
+  | {
+      type: 'minimumOrderValue';
+      minimumAmount: number;
+      label: RegExp;
+    }
+  | {
+      type: 'none';
+    };
+
 export type ShopConfig = {
   id: string,
   name: string;
   baseUrl: string;
   categoryPath: string;
   cartPath: string;
-  branch: 'aluminium';
-  locale: 'nl' | 'de';
+  
+  branch:
+    | 'aluminium'
+    | 'hout'
+    | 'eiken'
+    | 'natuursteen'
+    | 'leuning'
+    | 'staal';
+  
+  locale:
+    | 'nl'
+    | 'be'
+    | 'de'
+    | 'fr';
+
+  cartPolicy: CartPolicy;
 
   selectors: {
     configurator: string;
@@ -120,8 +148,8 @@ export type ShopConfig = {
   };
 
   testProducts: {
-    configurable: ConfigurableTestProduct;
-    standard: StandardTestProduct;
+    configurable?: ConfigurableTestProduct;
+    standard?: StandardTestProduct;
   };
 };
 
@@ -141,6 +169,12 @@ const allShops: ShopConfig[] = [
 
     cartPath:
       '/cart/',
+
+    cartPolicy: {
+      type: 'handlingFee',
+      label:
+        /handelingskosten/i,
+    },
 
     branch:
       'aluminium',
@@ -433,6 +467,12 @@ const allShops: ShopConfig[] = [
     cartPath:
       '/cart/',
 
+    cartPolicy: {
+      type: 'handlingFee',
+      label:
+        /bearbeitungskosten/i,
+    },
+
     branch:
       'aluminium',
 
@@ -683,6 +723,199 @@ const allShops: ShopConfig[] = [
 
         expectedHandlingFee:
           /17[,.]95\s*€/i,
+      },
+    },
+  },
+  {
+    id:
+      'houtvakman-nl',
+    
+    name:
+      'HOUTvakman.nl',
+    
+    baseUrl:
+      'https://www.houtvakman.nl',
+    
+    categoryPath:
+      '/eiken/',
+    
+    cartPath:
+      '/cart/',
+    
+    branch:
+      'hout',
+    
+    locale:
+      'nl',
+    
+    cartPolicy: {
+      type:
+        'minimumOrderValue',
+      
+      minimumAmount:
+        150,
+      
+      label:
+        /minimale orderwaarde|minimale bestelwaarde/i,
+    },
+
+    selectors: {
+      configurator:
+        '.product-configure, .custom-configurator, [data-configurator]',
+
+      addToCartButton:
+        'a.button-add, a.cart-btn, button[type="submit"], a:has-text("In mijn winkelwagen")',
+
+      standardQuantityInput:
+        'input',
+
+      checkoutButton:
+        'a:has-text("Bestellen"), a:has-text("Afrekenen"), a:has-text("Naar checkout")',
+    },
+
+    texts: {
+      configurator: {
+        nextStep:
+          /volgende stap/i,
+      },
+
+      product: {
+        increaseQuantity:
+          /waarde verhogen/i,
+      },
+
+      cart: {
+        addedToCart:
+          /dit product is toegevoegd aan de winkelwagen|toegevoegd aan uw winkelwagen|toegevoegd aan de winkelwagen/i,
+
+        goToCart:
+          /ga naar winkelwagen|verder naar bestellen|naar de winkelwagen|bekijk de winkelwagen/i,
+      },
+
+      handlingFee:
+        /handelingskosten/i,
+
+      checkout: {
+        heading:
+          /^bestellen$/i,
+        
+        billingAddress:
+          /factuuradres/i,
+        
+        shippingMethod:
+          /verzendmethode/i,
+        
+        paymentMethods:
+          /betaalmethoden/i,
+      },
+    },
+
+    checkoutFlow: {
+      customer: {
+        email:
+          'test+playwright@rocaonline.nl',
+        
+        firstName:
+          'Playwright',
+        
+        lastName:
+          'Test',
+        
+        postalCode:
+          '5804AN',
+        
+        houseNumber:
+          '10',
+
+        street:
+          'Nieuwhuisweg',
+        
+        city:
+          'Venray',
+
+        phone:
+          ',06123456789',
+      },
+
+      texts: {
+        fields: {
+          email:
+            /^e-?mail:\s*\*?$/i,
+
+          firstName:
+            /^voornaam:\s*\*?$/i,
+
+          lastName:
+            /^achternaam:\s*\*?$/i,
+
+          postalCode:
+            /^postcode:\s*\*?$/i,
+
+          houseNumber:
+            /^nr:\s*\*?$|^huisnummer:\s*\*?$/i,
+
+          street:
+            /^straatnaam:\s*\*?$|^straat:\s*\*?$/i,
+
+          city:
+            /^plaats:\s*\*?$|^woonplaats:\s*\*?$/i,
+
+          phone:
+            /^telefoon:\s*\*?$/i,
+        },
+
+        buttons: {
+          continue:
+            /doorgaan|verder|volgende/i,
+
+          submitOrder:
+            /kopen|bestelling plaatsen|afrekenen|plaats bestelling/i,
+        },
+
+        sections: {
+          shippingMethod:
+            /verzendmethode/i,
+
+          paymentMethod:
+            /betaalmethode|betaalmethoden/i,
+        },
+
+        terms:
+          /algemene voorwaarden|voorwaarden/i,
+      },
+    },
+
+    testProducts: {
+      standard: {
+        sku:
+          'oude-eiken-balk-140x140-mm-geborsteld-ad',
+        
+        type:
+          'standard',
+
+        path:
+          '/oude-eiken-balk-140x140-mm-geborsteld-ad.html',
+
+        pageTitle:
+          /oude eiken balk.*140x140 mm.*geborsteld/i,
+
+        variantTitle:
+           /250\s*cm/i,
+
+        cartTitle:
+          /oude eiken balk.*140x140 mm.*geborsteld/i,
+
+        quantity:
+          2,
+
+        expectedUnitPrice:
+          /€\s*190,60|190,60/i,
+
+        expectedCartLinePrice:
+          /€\s*381,20|381,20/i,
+
+        expectHandlingFee:
+          false,
       },
     },
   },

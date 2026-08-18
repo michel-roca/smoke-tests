@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: aluminiumvakman-production-smoke-tests
+  group: lightspeed-production-smoke-tests-nightly
   cancel-in-progress: false
 
 jobs:
@@ -24,6 +24,7 @@ jobs:
         shop:
           - aluminiumvakman-nl
           - aluminiumexperte-de
+          - houtvakman-nl
     
     concurrency:
       group: ${{ matrix.shop }}-production-smoke-tests

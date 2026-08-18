@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: aluminiumvakman-production-smoke-tests
+  group: lightspeed-production-smoke-tests-nightly
   cancel-in-progress: false
 
 jobs:

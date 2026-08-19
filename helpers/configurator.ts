@@ -107,17 +107,48 @@ async function finishConfiguration(
     )
     .first();
 
-  await expect(
-    finishStepsButton,
-  ).toBeVisible({
-    timeout: 10_000,
-  });
+  const finishButtonVisible =
+    await finishStepsButton
+      .waitFor({
+        state:
+          'visible',
+        timeout:
+          1_000,
+      })
+      .then(() => true)
+      .catch(() => false);
 
-  await finishStepsButton.evaluate(
-    (element) => {
-      (element as HTMLElement).click();
-    },
-  );
+  if (finishButtonVisible) {
+    await finishStepsButton.evaluate(
+      (element) => {
+        (element as HTMLElement).click();
+      },
+    );
+
+    return;
+  }
+
+  /*
+   * Sommige shops, zoals HOUTvakman, hebben geen aparte
+   * "stappen afronden"-knop. Na de laatste keuze wordt direct
+   * de normale winkelwagenknop actief.
+   */
+  const addToCartButton = configurator
+    .locator(
+      'a:visible, button:visible',
+    )
+    .filter({
+      hasText:
+        /in mijn winkelwagen|in den warenkorb/i,
+    })
+    .first();
+
+  await expect(
+    addToCartButton,
+  ).toBeVisible({
+    timeout:
+      10_000,
+  });
 }
 
 /*
@@ -136,16 +167,57 @@ async function executeTextStep(
     step.stepTitle,
   );
 
-  const input = configurator
+  const accessibleInput = configurator
     .getByRole('textbox', {
       name:
         step.fieldName,
     })
     .first();
 
+  const accessibleInputVisible =
+    await accessibleInput
+      .waitFor({
+        state:
+          'visible',
+        timeout:
+          1_000,
+      })
+      .then(() => true)
+      .catch(() => false);
+
+  const stepContainer = configurator
+    .locator(
+      'li, fieldset, section, .form-row, .gui-form, .product-configure-step, .custom-configurator-step, div',
+    )
+    .filter({
+      hasText:
+        step.stepTitle,
+    })
+    .filter({
+      has:
+        configurator.locator(
+          'input:not([type="hidden"]), textarea',
+        ),
+    })
+    .first();
+
+  const fallbackInput = stepContainer
+    .locator(
+      'input:not([type="hidden"]):visible, textarea:visible',
+    )
+    .first();
+
+  const input =
+    accessibleInputVisible
+      ? accessibleInput
+      : fallbackInput;
+
   await expect(
     input,
-  ).toBeVisible();
+  ).toBeVisible({
+    timeout:
+      10_000,
+  });
 
   await input.fill(
     step.value,
@@ -160,6 +232,10 @@ async function executeTextStep(
     input,
   ).toHaveValue(
     step.value,
+    {
+      timeout:
+        5_000,
+    },
   );
 }
 

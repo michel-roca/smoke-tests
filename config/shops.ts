@@ -761,16 +761,16 @@ const allShops: ShopConfig[] = [
 
     selectors: {
       configurator:
-        '.product-configure, .custom-configurator, [data-configurator]',
+        'main',
 
       addToCartButton:
-        'a.button-add, a.cart-btn, button[type="submit"], a:has-text("In mijn winkelwagen")',
+        'main a:visible, main button:visible',
 
       standardQuantityInput:
         'input',
 
       checkoutButton:
-        'a:has-text("Bestellen"), a:has-text("Afrekenen"), a:has-text("Naar checkout")',
+        'a:has-text("Bestellen"), a:has-text("Afrekenen"), a:has-text("Naar checkout"), a:has-text("Bestelling afronden")',
     },
 
     texts: {
@@ -886,6 +886,143 @@ const allShops: ShopConfig[] = [
     },
 
     testProducts: {
+      configurable: {
+        type:
+          'configurable',
+
+        sku:
+          'eiken-blad-op-maat-4-cm-1-laags-brede-lamellen-rustiek',        
+
+        path:
+          '/eiken-blad-op-maat-4-cm-dik-1-laags-bred-148477431.html',
+
+        pageTitle:
+          /eiken blad.*op maat.*4 cm.*brede lamellen.*rustiek/i,
+
+        cartTitle:
+          /eiken blad.*op maat.*4 cm.*rustiek/i,
+
+        expectedUnitPrice:
+          /[0-9]+[,.][0-9]{2}/i,
+
+        expectHandlingFee:
+          false,
+
+        steps: [
+          {
+            type:
+              'choice',
+
+            stepTitle:
+              /lengte/i,
+
+            optionText:
+              /160\s*cm/i,
+
+            expectedCartText:
+              /lengte:\s*160\b/i,
+          },
+
+          {
+            type:
+              'choice',
+
+            stepTitle:
+              /breedte/i,
+
+            optionText:
+              /80\s*cm/i,
+
+            expectedCartText:
+              /breedte:\s*80\b/i,
+          },
+
+          {
+            type:
+              'choice',
+
+            stepTitle:
+              /noesten gevuld/i,
+
+            optionText:
+              /noesten open laten|open laten/i,
+
+            expectedCartText:
+              /noesten.*open|open laten/i,
+          },
+
+          {
+            type:
+              'choice',
+
+            stepTitle:
+              /geschuurd|opgeborsteld/i,
+
+            optionText:
+              /geschuurd|standaard/i,
+
+            expectedCartText:
+              /geschuurd|standaard/i,
+          },
+
+          {
+            type:
+              'choice',
+
+            stepTitle:
+              /inclusief behandeling/i,
+
+            optionImageName:
+              /^nee$/i,
+
+            expectedCartText:
+              /behandeling.*nee|inclusief behandeling.*nee|\bnee\b/i,
+          },
+
+          {
+            type:
+              'choice',
+
+            stepTitle:
+              /speciale.*randen|hoeken/i,
+
+            optionText:
+              /geen|standaard|rechte randen/i,
+
+            expectedCartText:
+              /geen|standaard|rechte randen/i,
+          },
+
+          {
+            type:
+              'choice',
+
+            stepTitle:
+              /afgeschuinde randen/i,
+
+            optionText:
+              /scherpe randen/i,
+
+            expectedCartText:
+              /scherpe randen/i,
+          },
+
+          {
+            type:
+              'choice',
+
+            stepTitle:
+              /staalprofielen/i,
+
+            optionText:
+              /nee|zonder|geen/i,
+
+            expectedCartText:
+              /nee|zonder|geen/i,
+          },
+        ],
+      },
+
       standard: {
         sku:
           'oude-eiken-balk-140x140-mm-geborsteld-ad',

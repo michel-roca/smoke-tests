@@ -97,13 +97,20 @@ for (const shop of shops) {
             await test.step(
               'Product toevoegen aan cart',
               async () => {
-                const addToCartButton =
-                  page
-                    .locator(
-                      shop.selectors
-                        .addToCartButton,
-                    )
-                    .first();
+                const addToCartButton = page
+                  .locator(shop.selectors.addToCartButton)
+                  .filter({
+                    hasText:
+                      /in mijn winkelwagen|in den warenkorb/i,
+                  })
+                  .first();
+
+                await expect(
+                  addToCartButton,
+                ).toBeVisible({
+                  timeout:
+                    10_000,
+                });
 
                 await clickElementWithDom(
                   addToCartButton,

@@ -13,6 +13,7 @@ on:
           - aluminiumexperte-de
           - houtvakman-nl
           - houtvakman-be
+          - eikenvakman-nl
 
 permissions:
   contents: read

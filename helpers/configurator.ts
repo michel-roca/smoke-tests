@@ -161,18 +161,45 @@ async function executeTextStep(
     { type: 'text' }
   >,
 ): Promise<void> {
+  const inputIndex =
+    step.inputIndex ?? 0;
+
+  const activeStep = configurator
+    .locator('.step-wrap.active:visible')
+    .filter({
+      hasText:
+        step.stepTitle,
+    })
+    .first();
+
+  const activeStepVisible =
+    await activeStep
+      .waitFor({
+        state:
+          'visible',
+        timeout:
+          1_000,
+      })
+      .then(() => true)
+      .catch(() => false);
+
+  const stepRoot =
+    activeStepVisible
+      ? activeStep
+      : configurator;
+
   await expect(
-    configurator,
+    stepRoot,
   ).toContainText(
     step.stepTitle,
   );
 
-  const accessibleInput = configurator
+  const accessibleInput = stepRoot
     .getByRole('textbox', {
       name:
         step.fieldName,
     })
-    .first();
+    .nth(inputIndex);
 
   const accessibleInputVisible =
     await accessibleInput
@@ -185,27 +212,11 @@ async function executeTextStep(
       .then(() => true)
       .catch(() => false);
 
-  const stepContainer = configurator
-    .locator(
-      'li, fieldset, section, .form-row, .gui-form, .product-configure-step, .custom-configurator-step, div',
-    )
-    .filter({
-      hasText:
-        step.stepTitle,
-    })
-    .filter({
-      has:
-        configurator.locator(
-          'input:not([type="hidden"]), textarea',
-        ),
-    })
-    .first();
-
-  const fallbackInput = stepContainer
+  const fallbackInput = stepRoot
     .locator(
       'input:not([type="hidden"]):visible, textarea:visible',
     )
-    .first();
+    .nth(inputIndex);
 
   const input =
     accessibleInputVisible
@@ -434,6 +445,10 @@ export async function runConfigurator(
         configurator,
       );
 
+      continue;
+    }
+
+    if (step.advanceAfter === false) {
       continue;
     }
 

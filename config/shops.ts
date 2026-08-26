@@ -29,9 +29,21 @@ export type TextConfiguratorStep = {
   fieldName: RegExp;
 
   /*
+   * Bij meerdere invoervelden met dezelfde naam,
+   * bijvoorbeeld lengte en breedte binnen één stap.
+   */
+  inputIndex?: number;
+
+  /*
    * Waarde die in het veld wordt ingevoerd.
    */
   value: string;
+
+  /*
+   * Na deze stap wel/niet op "Volgende stap" klikken.
+   * Handig wanneer meerdere velden binnen dezelfde stap zitten.
+   */
+  advanceAfter?: boolean;
 
   /*
    * Tekst die uiteindelijk in de cart moet staan.
@@ -47,6 +59,8 @@ export type ChoiceConfiguratorStep = {
   optionText?: RegExp;
   optionSelector?: string;
   optionImageName?: RegExp;
+
+  advanceAfter?: boolean;
 
   expectedCartText: RegExp;
 };
@@ -451,6 +465,7 @@ const allShops: ShopConfig[] = [
       },
     },
   },
+  
   {
     id:
       'aluminiumexperte-de',
@@ -726,6 +741,7 @@ const allShops: ShopConfig[] = [
       },
     },
   },
+  
   {
     id:
       'houtvakman-nl',
@@ -1056,6 +1072,7 @@ const allShops: ShopConfig[] = [
       },
     },
   },
+
   {
     id:
       'houtvakman-be',
@@ -1370,6 +1387,332 @@ const allShops: ShopConfig[] = [
         expectHandlingFee:
           false,
       },
+    },
+  },
+
+  {
+    id:
+      'eikenvakman-nl',
+    
+    name:
+      'EIKENvakman.nl',
+    
+    baseUrl:
+      'https://www.eikenvakman.nl',
+    
+    categoryPath:
+      '/tafel/',
+    
+    cartPath:
+      '/cart/',
+    
+    branch:
+      'eiken',
+    
+    locale:
+      'nl',
+    
+    cartPolicy: {
+      type:
+        'none',
+    },
+
+    selectors: {
+      configurator:
+        'main',
+
+      addToCartButton:
+        'main a:visible, main button:visible',
+
+      standardQuantityInput:
+        'input',
+
+      checkoutButton:
+        'a:has-text("Bestellen"), a:has-text("Afrekenen"), a:has-text("Naar checkout"), a:has-text("Bestelling afronden")',
+    },
+
+    texts: {
+      configurator: {
+        nextStep:
+          /volgende stap/i,
+      },
+
+      product: {
+        increaseQuantity:
+          /waarde verhogen/i,
+      },
+
+      cart: {
+        addedToCart:
+          /dit product is toegevoegd aan de winkelwagen|toegevoegd aan uw winkelwagen|toegevoegd aan de winkelwagen/i,
+
+        goToCart:
+          /ga naar winkelwagen|verder naar bestellen|naar de winkelwagen|bekijk de winkelwagen/i,
+      },
+
+      handlingFee:
+        /handelingskosten/i,
+
+      checkout: {
+        heading:
+          /^bestellen$/i,
+        
+        billingAddress:
+          /factuuradres/i,
+        
+        shippingMethod:
+          /verzendmethode/i,
+        
+        paymentMethods:
+          /betaalmethoden/i,
+      },
+    },
+
+    checkoutFlow: {
+      customer: {
+        email:
+          'test+playwright@rocaonline.nl',
+        
+        firstName:
+          'Playwright',
+        
+        lastName:
+          'Test',
+        
+        postalCode:
+          '5804AN',
+        
+        houseNumber:
+          '10',
+
+        street:
+          'Nieuwhuisweg',
+        
+        city:
+          'Venray',
+
+        phone:
+          ',06123456789',
+      },
+
+      texts: {
+        fields: {
+          email:
+            /^e-?mail:\s*\*?$/i,
+
+          firstName:
+            /^voornaam:\s*\*?$/i,
+
+          lastName:
+            /^achternaam:\s*\*?$/i,
+
+          postalCode:
+            /^postcode:\s*\*?$/i,
+
+          houseNumber:
+            /^nr:\s*\*?$|^huisnummer:\s*\*?$/i,
+
+          street:
+            /^straatnaam:\s*\*?$|^straat:\s*\*?$/i,
+
+          city:
+            /^plaats:\s*\*?$|^woonplaats:\s*\*?$/i,
+
+          phone:
+            /^telefoon:\s*\*?$/i,
+        },
+
+        buttons: {
+          continue:
+            /doorgaan|verder|volgende/i,
+
+          submitOrder:
+            /kopen|bestelling plaatsen|afrekenen|plaats bestelling/i,
+        },
+
+        sections: {
+          shippingMethod:
+            /verzendmethode/i,
+
+          paymentMethod:
+            /betaalmethode|betaalmethoden/i,
+        },
+
+        terms:
+          /algemene voorwaarden|voorwaarden/i,
+      },
+    },
+
+    testProducts: {
+      configurable: {
+        type:
+          'configurable',
+
+        sku:
+          'eiken-eettafel-op-maat-27-cm-foutvrij',        
+
+        path:
+          '/eiken-eettafel-op-maat-27-cm-foutvrij.html',
+
+        pageTitle:
+          /eiken eettafel.*op maat.*2,7 cm.*foutvrij/i,
+
+        cartTitle:
+          /eiken eettafel.*op maat.*2,7 cm.*foutvrij/i,
+
+        expectedUnitPrice:
+          /[0-9]+[,.][0-9]{2}/i,
+
+        expectHandlingFee:
+          false,
+
+        steps: [
+          {
+            type:
+              'text',
+
+            stepTitle:
+              /afmeting/i,
+
+            fieldName:
+              /aantal/i,
+
+            inputIndex:
+              0,
+
+            value:
+              '160',
+
+            expectedCartText:
+              /lengte:\s*160\b/i,
+
+            advanceAfter:
+              false,
+          },
+
+          {
+            type:
+              'text',
+
+            stepTitle:
+              /afmeting/i,
+
+            fieldName:
+              /aantal/i,
+
+            inputIndex:
+              1,
+
+            value:
+              '80',
+
+            expectedCartText:
+              /breedte:\s*80/i,
+          },
+
+          {
+            type:
+              'choice',
+
+            stepTitle:
+              /speciale randafwerking/i,
+            
+            optionImageName:
+              /verjongde randen/i,
+
+            expectedCartText:
+              /speciale randafwerking\?\s*verjongde randen|verjongde randen/i,
+          },
+
+          {
+            type:
+              'choice',
+
+            stepTitle:
+              /behandeld/i,
+
+            optionImageName:
+              /skylt.*transparante.*lak.*horeca|skylt.*horeca/i,
+
+            expectedCartText:
+              /behandeld\?\s*skylt.*horeca|skylt.*transparante.*lak.*horeca/i,
+          },
+
+          {
+            type:
+              'choice',
+
+            stepTitle:
+              /tafelpoot/i,
+
+            optionImageName:
+              /stalen.*u[- ]?poten|u[- ]?poten/i,
+
+            expectedCartText:
+              /tafelpoot.*stalen.*u[- ]?poten|stalen.*u[- ]?poten|u[- ]?poten/i,
+          },
+
+          {
+            type:
+              'choice',
+
+            stepTitle:
+              /geborsteld/i,
+
+            optionText:
+              /geschuurd \(korrel 120\)|geschuurd/i,
+
+            expectedCartText:
+              /geschuurd/i,
+          },
+
+          {
+            type:
+              'choice',
+
+            stepTitle:
+              /staalprofielen/i,
+
+            optionText:
+              /zonder staalprofielen/i,
+
+            expectedCartText:
+              /zonder staalprofielen|staalprofielen.*zonder/i,
+          },
+        ],
+      },
+
+      /*standard: {
+        sku:
+          'oude-eiken-balk-140x140-mm-geborsteld-ad',
+        
+        type:
+          'standard',
+
+        path:
+          '/oude-eiken-balk-140x140-mm-geborsteld-ad.html',
+
+        pageTitle:
+          /oude eiken balk.*140x140 mm.*geborsteld/i,
+
+        variantTitle:
+           /250\s*cm/i,
+
+        cartTitle:
+          /oude eiken balk.*140x140 mm.*geborsteld/i,
+
+        quantity:
+          2,
+
+        expectedUnitPrice:
+          /€\s*190,60|190,60/i,
+
+        expectedCartLinePrice:
+          /€\s*381,20|381,20/i,
+
+        expectHandlingFee:
+          false,
+      },*/
     },
   },
 ];

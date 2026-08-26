@@ -25,6 +25,7 @@ jobs:
           - aluminiumvakman-nl
           - aluminiumexperte-de
           - houtvakman-nl
+          - houtvakman-be
     
     concurrency:
       group: ${{ matrix.shop }}-production-smoke-tests

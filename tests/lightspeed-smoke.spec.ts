@@ -101,7 +101,7 @@ for (const shop of shops) {
                   .locator(shop.selectors.addToCartButton)
                   .filter({
                     hasText:
-                      /in mijn winkelwagen|in den warenkorb/i,
+                      /in mijn winkelwagen|in winkelwagen|in den warenkorb/i,
                   })
                   .first();
 
@@ -272,18 +272,46 @@ for (const shop of shops) {
             );
 
             await test.step(
-              'Aantal van gekozen productvariant aanpassen',
+              product.variantTitle
+                ? 'Aantal van gekozen productvariant aanpassen'
+                : 'Prijs van standaard product controleren',
               async () => {
+                /*
+                * Sommige standaardproducten, zoals EIKENvakman tafelpoten,
+                * hebben geen varianttabel met plus/min-knoppen.
+                * Die testen we als direct bestelbaar product met aantal 1.
+                */
+                if (!product.variantTitle) {
+                  await expect(
+                    page.locator('main'),
+                  ).toContainText(
+                    product.expectedUnitPrice,
+                  );
+
+                  expect(product.quantity).toBe(1);
+
+                  return;
+                }
+
+                const variantRow = page
+                  .locator('main tbody tr:visible')
+                  .filter({
+                    hasText:
+                      product.variantTitle,
+                  })
+                  .first();
+
+                await expect(variantRow).toBeVisible();
+
+                await expect(variantRow).toContainText(
+                  product.expectedUnitPrice,
+                );
+
                 const quantityInput = variantRow
                   .getByRole('textbox')
-                  .last();
+                  .first();
 
-                await expect(
-                  quantityInput,
-                ).toBeVisible({
-                  timeout:
-                    10_000,
-                });
+                await expect(quantityInput).toBeVisible();
 
                 const increaseButton = variantRow
                   .getByRole('link', {
@@ -292,9 +320,7 @@ for (const shop of shops) {
                   })
                   .first();
 
-                await expect(
-                  increaseButton,
-                ).toBeVisible({
+                await expect(increaseButton).toBeVisible({
                   timeout:
                     10_000,
                 });
@@ -348,9 +374,7 @@ for (const shop of shops) {
                   );
                 }
 
-                await expect(
-                  quantityInput,
-                ).toHaveValue(
+                await expect(quantityInput).toHaveValue(
                   String(product.quantity),
                 );
 

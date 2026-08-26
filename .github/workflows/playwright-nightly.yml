@@ -27,6 +27,7 @@ jobs:
           - houtvakman-nl
           - houtvakman-be
           - eikenvakman-nl
+          - eikenvakman-be
     
     concurrency:
       group: ${{ matrix.shop }}-production-smoke-tests

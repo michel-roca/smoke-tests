@@ -1712,6 +1712,357 @@ const allShops: ShopConfig[] = [
       },
     },
   },
+
+  {
+    id:
+      'eikenvakman-be',
+    
+    name:
+      'EIKENvakman.be',
+    
+    baseUrl:
+      'https://www.eikenvakman.be',
+    
+    categoryPath:
+      '/tafel/',
+    
+    cartPath:
+      '/cart/',
+    
+    branch:
+      'eiken',
+    
+    locale:
+      'be',
+    
+    cartPolicy: {
+      type:
+        'none',
+    },
+
+    selectors: {
+      configurator:
+        'main',
+
+      addToCartButton:
+        'main a:visible, main button:visible',
+
+      standardQuantityInput:
+        'input',
+
+      checkoutButton:
+        'a:has-text("Bestellen"), a:has-text("Afrekenen"), a:has-text("Naar checkout"), a:has-text("Bestelling afronden")',
+    },
+
+    texts: {
+      configurator: {
+        nextStep:
+          /volgende stap/i,
+      },
+
+      product: {
+        increaseQuantity:
+          /waarde verhogen/i,
+      },
+
+      cart: {
+        addedToCart:
+          /dit product is toegevoegd aan de winkelwagen|toegevoegd aan uw winkelwagen|toegevoegd aan de winkelwagen/i,
+
+        goToCart:
+          /ga naar winkelwagen|verder naar bestellen|naar de winkelwagen|bekijk de winkelwagen/i,
+      },
+
+      handlingFee:
+        /handelingskosten/i,
+
+      checkout: {
+        heading:
+          /^bestellen$/i,
+        
+        billingAddress:
+          /factuuradres/i,
+        
+        shippingMethod:
+          /verzendmethode/i,
+        
+        paymentMethods:
+          /betaalmethoden/i,
+      },
+    },
+
+    checkoutFlow: {
+      customer: {
+        email:
+          'test+playwright@rocaonline.nl',
+        
+        firstName:
+          'Playwright',
+        
+        lastName:
+          'Test',
+        
+        postalCode:
+          '5804AN',
+        
+        houseNumber:
+          '10',
+
+        street:
+          'Nieuwhuisweg',
+        
+        city:
+          'Venray',
+
+        phone:
+          ',06123456789',
+      },
+
+      texts: {
+        fields: {
+          email:
+            /^e-?mail:\s*\*?$/i,
+
+          firstName:
+            /^voornaam:\s*\*?$/i,
+
+          lastName:
+            /^achternaam:\s*\*?$/i,
+
+          postalCode:
+            /^postcode:\s*\*?$/i,
+
+          houseNumber:
+            /^nr:\s*\*?$|^huisnummer:\s*\*?$/i,
+
+          street:
+            /^straatnaam:\s*\*?$|^straat:\s*\*?$/i,
+
+          city:
+            /^plaats:\s*\*?$|^woonplaats:\s*\*?$/i,
+
+          phone:
+            /^telefoon:\s*\*?$/i,
+        },
+
+        buttons: {
+          continue:
+            /doorgaan|verder|volgende/i,
+
+          submitOrder:
+            /kopen|bestelling plaatsen|afrekenen|plaats bestelling/i,
+        },
+
+        sections: {
+          shippingMethod:
+            /verzendmethode/i,
+
+          paymentMethod:
+            /betaalmethode|betaalmethoden/i,
+        },
+
+        terms:
+          /algemene voorwaarden|voorwaarden/i,
+      },
+    },
+
+    testProducts: {
+      configurable: {
+        type:
+          'configurable',
+
+        sku:
+          'eiken-eettafel-op-maat-27-cm-prime-brede-lamel',        
+
+        path:
+          '/eiken-eettafel-op-maat-27-cm-prime-brede-lamel.html',
+
+        pageTitle:
+          /eiken eettafel.*op maat.*2,7 cm.*prime.*brede lamel/i,
+
+        cartTitle:
+          /eiken eettafel.*op maat.*2,7 cm.*prime|eiken eettafel.*brede lamel/i,
+
+        expectedUnitPrice:
+          /[0-9]+[,.][0-9]{2}/i,
+
+        expectHandlingFee:
+          false,
+
+        steps: [
+          {
+            type:
+              'text',
+
+            stepTitle:
+              /afmeting/i,
+
+            fieldName:
+              /aantal/i,
+
+            inputIndex:
+              0,
+
+            value:
+              '240',
+
+            expectedCartText:
+              /lengte:\s*240\b/i,
+
+            advanceAfter:
+              false,
+          },
+
+          {
+            type:
+              'text',
+
+            stepTitle:
+              /afmeting/i,
+
+            fieldName:
+              /aantal/i,
+
+            inputIndex:
+              1,
+
+            value:
+              '110',
+
+            expectedCartText:
+              /breedte:\s*110/i,
+          },
+
+          {
+            type:
+              'choice',
+
+            stepTitle:
+              /speciale randafwerking/i,
+            
+            optionImageName:
+              /ronde hoeken/i,
+
+            expectedCartText:
+              /ronde hoeken/i,
+          },
+
+          {
+            type:
+              'choice',
+
+            stepTitle:
+              /radius/i,
+
+            optionText:
+              /8\s*cm/i,
+
+            expectedCartText:
+              /radius.*8\s*cm|8\s*cm/i,
+          },
+
+          {
+            type:
+              'choice',
+
+            stepTitle:
+              /aantal.*ronde hoeken|ronde hoeken/i,
+
+            optionText:
+              /4\s*ronde hoeken|4\s*hoeken/i,
+
+            expectedCartText:
+              /4\s*ronde hoeken|aantal.*4/i,
+          },
+
+          {
+            type:
+              'choice',
+
+            stepTitle:
+              /behandeld/i,
+
+            optionImageName:
+              /white.*olie|olie.*white/i,
+
+            expectedCartText:
+              /white.*olie|olie.*white/i,
+          },
+
+          {
+            type:
+              'choice',
+
+            stepTitle:
+              /tafelpoot/i,
+
+            optionImageName:
+              /x[- ]?tafelpoten.*zwart|x[- ]?poten.*zwart|zwart.*x[- ]?tafelpoten/i,
+
+            expectedCartText:
+              /x[- ]?tafelpoten.*zwart|x[- ]?poten.*zwart|zwart.*x[- ]?tafelpoten/i,
+          },
+
+          {
+            type:
+              'choice',
+
+            stepTitle:
+              /geborsteld/i,
+
+            optionText:
+              /geborsteld|opgeborsteld/i,
+
+            expectedCartText:
+              /geborsteld/i,
+          },
+
+          {
+            type:
+              'choice',
+
+            stepTitle:
+              /staalprofielen/i,
+
+            optionText:
+              /met staalprofielen/i,
+
+            expectedCartText:
+              /met staalprofielen\?\s*met staalprofielen|met staalprofielen/i,
+          },
+        ],
+      },
+
+      /*standard: {
+        sku:
+          'stalen-x-tafelpoten-set-10x10cm-78-cm-breed-72-cm',
+        
+        type:
+          'standard',
+
+        path:
+          '/stalen-x-tafelpoten-set-10x10cm-78-cm-breed-72-cm.html',
+
+        pageTitle:
+          /stalen x[- ]?poten.*zwart.*set.*10x10 cm.*78 cm.*72 cm/i,
+
+        cartTitle:
+          /stalen x[- ]?poten.*zwart.*set/i,
+
+        quantity:
+          1,
+
+        expectedUnitPrice:
+          /161[,.]60/i,
+
+        expectedCartLinePrice:
+          /161[,.]60/i,
+
+        expectHandlingFee:
+          false,
+      },*/
+    },
+  },
 ];
 
 const selectedShop =

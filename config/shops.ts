@@ -1056,6 +1056,322 @@ const allShops: ShopConfig[] = [
       },
     },
   },
+  {
+    id:
+      'houtvakman-be',
+    
+    name:
+      'HOUTvakman.be',
+    
+    baseUrl:
+      'https://www.houtvakman.be',
+    
+    categoryPath:
+      '/eiken/',
+    
+    cartPath:
+      '/cart/',
+    
+    branch:
+      'hout',
+    
+    locale:
+      'be',
+    
+    cartPolicy: {
+      type:
+        'minimumOrderValue',
+      
+      minimumAmount:
+        150,
+      
+      label:
+        /minimale orderwaarde|minimale bestelwaarde/i,
+    },
+
+    selectors: {
+      configurator:
+        'main',
+
+      addToCartButton:
+        'main a:visible, main button:visible',
+
+      standardQuantityInput:
+        'input',
+
+      checkoutButton:
+        'a:has-text("Bestellen"), a:has-text("Afrekenen"), a:has-text("Naar checkout"), a:has-text("Bestelling afronden")',
+    },
+
+    texts: {
+      configurator: {
+        nextStep:
+          /volgende stap/i,
+      },
+
+      product: {
+        increaseQuantity:
+          /waarde verhogen/i,
+      },
+
+      cart: {
+        addedToCart:
+          /dit product is toegevoegd aan de winkelwagen|toegevoegd aan uw winkelwagen|toegevoegd aan de winkelwagen/i,
+
+        goToCart:
+          /ga naar winkelwagen|verder naar bestellen|naar de winkelwagen|bekijk de winkelwagen/i,
+      },
+
+      handlingFee:
+        /handelingskosten/i,
+
+      checkout: {
+        heading:
+          /^bestellen$/i,
+        
+        billingAddress:
+          /factuuradres/i,
+        
+        shippingMethod:
+          /verzendmethode/i,
+        
+        paymentMethods:
+          /betaalmethoden/i,
+      },
+    },
+
+    checkoutFlow: {
+      customer: {
+        email:
+          'test+playwright@rocaonline.nl',
+        
+        firstName:
+          'Playwright',
+        
+        lastName:
+          'Test',
+        
+        postalCode:
+          '2000',
+        
+        houseNumber:
+          '1',
+
+        street:
+          'Meir',
+        
+        city:
+          'Antwerpen',
+
+        phone:
+          ',0470123456',
+      },
+
+      texts: {
+        fields: {
+          email:
+            /^e-?mail:\s*\*?$/i,
+
+          firstName:
+            /^voornaam:\s*\*?$/i,
+
+          lastName:
+            /^achternaam:\s*\*?$/i,
+
+          postalCode:
+            /^postcode:\s*\*?$/i,
+
+          houseNumber:
+            /^nr:\s*\*?$|^huisnummer:\s*\*?$/i,
+
+          street:
+            /^straatnaam:\s*\*?$|^straat:\s*\*?$/i,
+
+          city:
+            /^plaats:\s*\*?$|^woonplaats:\s*\*?$/i,
+
+          phone:
+            /^telefoon:\s*\*?$/i,
+        },
+
+        buttons: {
+          continue:
+            /doorgaan|verder|volgende/i,
+
+          submitOrder:
+            /kopen|bestelling plaatsen|afrekenen|plaats bestelling/i,
+        },
+
+        sections: {
+          shippingMethod:
+            /verzendmethode/i,
+
+          paymentMethod:
+            /betaalmethode|betaalmethoden/i,
+        },
+
+        terms:
+          /algemene voorwaarden|voorwaarden/i,
+      },
+    },
+
+    testProducts: {
+      configurable: {
+        type:
+          'configurable',
+
+        sku:
+          'eiken-blad-op-maat-foutvrij-eikenhout-brede-lamellen-27-cm',        
+
+        path:
+          '/eiken-blad-op-maat-foutvrij-eikenhout-br-148538514.html',
+
+        pageTitle:
+          /eiken blad.*op maat.*foutvrij eikenhout.*2,7 cm.*brede lamellen/i,
+
+        cartTitle:
+          /eiken blad.*op maat.*foutvrij eikenhout.*brede lamellen/i,
+
+        expectedUnitPrice:
+          /[0-9]+[,.][0-9]{2}/i,
+
+        expectHandlingFee:
+          false,
+
+        steps: [
+          {
+            type:
+              'choice',
+
+            stepTitle:
+              /lengte/i,
+
+            optionText:
+              /160\s*cm/i,
+
+            expectedCartText:
+              /lengte:\s*160\b/i,
+          },
+
+          {
+            type:
+              'choice',
+
+            stepTitle:
+              /breedte/i,
+
+            optionText:
+              /80\s*cm/i,
+
+            expectedCartText:
+              /breedte:\s*80\b/i,
+          },
+
+          {
+            type:
+              'choice',
+
+            stepTitle:
+              /geschuurd|opgeborsteld/i,
+
+            optionText:
+              /geschuurd|standaard/i,
+
+            expectedCartText:
+              /geschuurd|standaard/i,
+          },
+
+          {
+            type:
+              'choice',
+
+            stepTitle:
+              /inclusief behandeling/i,
+
+            optionImageName:
+              /^nee$/i,
+
+            expectedCartText:
+              /behandeling.*nee|inclusief behandeling.*nee|\bnee\b/i,
+          },
+
+          {
+            type:
+              'choice',
+
+            stepTitle:
+              /speciale.*randen|hoeken/i,
+
+            optionText:
+              /geen|standaard|rechte randen/i,
+
+            expectedCartText:
+              /geen|standaard|rechte randen/i,
+          },
+
+          {
+            type:
+              'choice',
+
+            stepTitle:
+              /afgeschuinde randen/i,
+
+            optionText:
+              /scherpe randen/i,
+
+            expectedCartText:
+              /scherpe randen/i,
+          },
+
+          {
+            type:
+              'choice',
+
+            stepTitle:
+              /staalprofielen/i,
+
+            optionText:
+              /nee|zonder|geen/i,
+
+            expectedCartText:
+              /nee|zonder|geen/i,
+          },
+        ],
+      },
+
+      /*standard: {
+        sku:
+          'oude-eiken-balk-140x140-mm-geborsteld-ad',
+        
+        type:
+          'standard',
+
+        path:
+          '/oude-eiken-balk-140x140-mm-geborsteld-ad.html',
+
+        pageTitle:
+          /oude eiken balk.*140x140 mm.*geborsteld/i,
+
+        variantTitle:
+           /250\s*cm/i,
+
+        cartTitle:
+          /oude eiken balk.*140x140 mm.*geborsteld/i,
+
+        quantity:
+          2,
+
+        expectedUnitPrice:
+          /€\s*190,60|190,60/i,
+
+        expectedCartLinePrice:
+          /€\s*381,20|381,20/i,
+
+        expectHandlingFee:
+          false,
+      },*/
+    },
+  },
 ];
 
 const selectedShop =

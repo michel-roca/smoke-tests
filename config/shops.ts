@@ -1682,37 +1682,34 @@ const allShops: ShopConfig[] = [
         ],
       },
 
-      /*standard: {
+      standard: {
         sku:
-          'oude-eiken-balk-140x140-mm-geborsteld-ad',
+          'stalen-x-tafelpoten-set-10x10cm-78-cm-breed-72-cm',
         
         type:
           'standard',
 
         path:
-          '/oude-eiken-balk-140x140-mm-geborsteld-ad.html',
+          '/stalen-x-tafelpoten-set-10x10cm-78-cm-breed-72-cm.html',
 
         pageTitle:
-          /oude eiken balk.*140x140 mm.*geborsteld/i,
-
-        variantTitle:
-           /250\s*cm/i,
+          /stalen x[- ]?poten.*zwart.*set.*10x10 cm.*78 cm.*72 cm/i,
 
         cartTitle:
-          /oude eiken balk.*140x140 mm.*geborsteld/i,
+          /stalen x[- ]?poten.*zwart.*set/i,
 
         quantity:
-          2,
+          1,
 
         expectedUnitPrice:
-          /€\s*190,60|190,60/i,
+          /161[,.]60/i,
 
         expectedCartLinePrice:
-          /€\s*381,20|381,20/i,
+          /161[,.]60/i,
 
         expectHandlingFee:
           false,
-      },*/
+      },
     },
   },
 ];

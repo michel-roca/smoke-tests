@@ -1794,7 +1794,7 @@ const allShops: ShopConfig[] = [
     checkoutFlow: {
       customer: {
         email:
-          'test+playwright@rocaonline.nl',
+          'test+playwright-be@rocaonline.nl',
         
         firstName:
           'Playwright',
@@ -1803,19 +1803,19 @@ const allShops: ShopConfig[] = [
           'Test',
         
         postalCode:
-          '5804AN',
+          '2000',
         
         houseNumber:
-          '10',
+          '1',
 
         street:
-          'Nieuwhuisweg',
+          'Meir',
         
         city:
-          'Venray',
+          'Antwerpen',
 
         phone:
-          ',06123456789',
+          '0470123456',
       },
 
       texts: {
@@ -2033,21 +2033,21 @@ const allShops: ShopConfig[] = [
         ],
       },
 
-      /*standard: {
+      standard: {
         sku:
-          'stalen-x-tafelpoten-set-10x10cm-78-cm-breed-72-cm',
+          'x-tafelpoten-zwart-metaal-10x10-cm-breedte-78-cm-h',
         
         type:
           'standard',
 
         path:
-          '/stalen-x-tafelpoten-set-10x10cm-78-cm-breed-72-cm.html',
+          '/x-tafelpoten-zwart-metaal-10x10-cm-breedte-78-cm-h.html',
 
         pageTitle:
-          /stalen x[- ]?poten.*zwart.*set.*10x10 cm.*78 cm.*72 cm/i,
+          /x[- ]?tafelpoten.*zwart.*set.*metaal.*10x10 cm.*78 cm.*72 cm/i,
 
         cartTitle:
-          /stalen x[- ]?poten.*zwart.*set/i,
+          /x[- ]?tafelpoten.*zwart.*set|x[- ]?tafelpoten.*zwart.*metaal/i,
 
         quantity:
           1,
@@ -2060,7 +2060,7 @@ const allShops: ShopConfig[] = [
 
         expectHandlingFee:
           false,
-      },*/
+      },
     },
   },
 ];

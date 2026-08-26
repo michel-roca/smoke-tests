@@ -1339,37 +1339,37 @@ const allShops: ShopConfig[] = [
         ],
       },
 
-      /*standard: {
+      standard: {
         sku:
-          'oude-eiken-balk-140x140-mm-geborsteld-ad',
+          'eiken-balk-40x190-mm-geschaafd-ad',
         
         type:
           'standard',
 
         path:
-          '/oude-eiken-balk-140x140-mm-geborsteld-ad.html',
+          '/eiken-balk-40x190-mm-geschaafd-ad.html',
 
         pageTitle:
-          /oude eiken balk.*140x140 mm.*geborsteld/i,
+          /eiken balk.*40x190 mm.*geschaafd.*eikenhout AD/i,
 
         variantTitle:
-           /250\s*cm/i,
+           /400\s*cm/i,
 
         cartTitle:
-          /oude eiken balk.*140x140 mm.*geborsteld/i,
+          /eiken balk.*40x190 mm.*geschaafd/i,
 
         quantity:
           2,
 
         expectedUnitPrice:
-          /€\s*190,60|190,60/i,
+          /104[,.]35/i,
 
         expectedCartLinePrice:
-          /€\s*381,20|381,20/i,
+          /208[,.]70/i,
 
         expectHandlingFee:
           false,
-      },*/
+      },
     },
   },
 ];

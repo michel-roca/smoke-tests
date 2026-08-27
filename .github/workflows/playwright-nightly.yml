@@ -1,6 +1,7 @@
 name: Playwright - Nachtelijk
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '17 2 * * *'
       timezone: 'Europe/Amsterdam'

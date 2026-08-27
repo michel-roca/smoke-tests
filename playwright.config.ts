@@ -61,9 +61,16 @@ export default defineConfig({
       ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    trace: 'on-first-retry',
-    screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
+    trace:
+      isCI
+        ? 'on-first-retry'
+        : 'retain-on-failure',
+
+    screenshot:
+      'off',
+
+    video:
+      'off',
   },
 
   /* Configure projects for major browsers */

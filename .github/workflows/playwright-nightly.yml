@@ -56,10 +56,26 @@ jobs:
       - name: Playwright-tests uitvoeren
         run: SHOP=${{ matrix.shop }} npx playwright test --workers=1
 
+      - name: Grote Playwright-bestanden opruimen
+        if: ${{ always() }}
+        run: |
+          find playwright-report -type f \( -name "*.webm" -o -name "*.png" -o -name "*.jpg" -o -name "error-context.md" \) -delete || true
+          find test-results -type f \( -name "*.webm" -o -name "*.png" -o -name "*.jpg" -o -name "error-context.md" \) -delete || true
+
       - name: Playwright-rapport uploaden
-        if: ${{ !cancelled() }}
+        if: ${{ failure() }}
         uses: actions/upload-artifact@v7
         with:
           name: playwright-report-nightly-${{ matrix.shop }}-${{ github.run_id }}-${{ github.run_attempt }}
-          path: playwright-report/
-          retention-days: 30
+          path: |
+            playwright-report/
+            test-results/
+            !playwright-report/**/*.webm
+            !playwright-report/**/*.png
+            !playwright-report/**/*.jpg
+            !playwright-report/**/error-context.md
+            !test-results/**/*.webm
+            !test-results/**/*.png
+            !test-results/**/*.jpg
+            !test-results/**/error-context.md
+          retention-days: 7

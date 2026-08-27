@@ -308,7 +308,9 @@ for (const shop of shops) {
                 );
 
                 const quantityInput = variantRow
-                  .getByRole('textbox')
+                  .locator(
+                    'input:not(.length-input):not([data-label="m1"]):visible',
+                  )
                   .first();
 
                 await expect(quantityInput).toBeVisible();

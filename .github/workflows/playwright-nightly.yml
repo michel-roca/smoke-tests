@@ -37,6 +37,16 @@ jobs:
     steps:
       - name: Repository ophalen
         uses: actions/checkout@v5
+      
+      - name: Schedule debug info
+        if: ${{ github.event_name == 'schedule' }}
+        run: |
+          echo "event_name=${{ github.event_name }}"
+          echo "event_schedule=${{ github.event.schedule }}"
+          echo "UTC time:"
+          date -u
+          echo "Amsterdam time:"
+          TZ=Europe/Amsterdam date
 
       - name: Node.js installeren
         uses: actions/setup-node@v5

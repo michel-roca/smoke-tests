@@ -2069,7 +2069,7 @@ const allShops: ShopConfig[] = [
       'eichenholzprofi-de',
     
     name:
-      'Eichenholzprofi.de',
+      'Eichenholzprofi.de', 
     
     baseUrl:
       'https://www.eichenholzprofi.de',
@@ -2354,6 +2354,38 @@ const allShops: ShopConfig[] = [
               /ohne gratleisten|gratleisten.*ohne/i,
           },
         ],
+      },
+
+      standard: {
+        sku:
+          'metall-hochtischbeine-in-u-form-schwarz-2er-set-8x',
+        
+        type:
+          'standard',
+        
+        path:
+          '/metall-hochtischbeine-in-u-form-schwarz-2er-set-8x.html',
+
+        pageTitle:
+          /metall[- ]hochtischbeine.*u[- ]form.*schwarz.*2er[- ]set/i,
+
+        variantTitle:
+          /schwarz.*8x8 cm.*60 cm.*90 cm/i,
+
+        cartTitle:
+          /metall[- ]hochtischbeine.*u[- ]form.*schwarz|hochtischbeine.*u[- ]form/i,
+
+        quantity:
+          1,
+
+        expectedUnitPrice:
+          /244[,.]75/i,
+
+        expectedCartLinePrice:
+          /244[,.]75/i,
+
+        expectHandlingFee:
+          false,
       },
     },
     

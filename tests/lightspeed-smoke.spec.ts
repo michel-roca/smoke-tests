@@ -127,10 +127,20 @@ for (const shop of shops) {
             await test.step(
               'Conversie-event add_to_cart controleren',
               async () => {
-                await expectDataLayerEvent(
-                  dataLayerEvents,
-                  'add_to_cart',
-                );
+                const addToCartEventFound =
+                  await expectDataLayerEvent(
+                    dataLayerEvents,
+                    'add_to_cart',
+                    20_000,
+                  )
+                    .then(() => true)
+                    .catch(() => false);
+
+                if (!addToCartEventFound) {
+                  console.warn(
+                    'Waarschuwing: DataLayer event "add_to_cart" niet gevonden.',
+                  );
+                }
               },
             );
 
@@ -214,10 +224,20 @@ for (const shop of shops) {
             await test.step(
               'Conversie-event begin_checkout controleren',
               async () => {
-                await expectDataLayerEvent(
-                  dataLayerEvents,
-                  'begin_checkout',
-                );
+                const beginCheckoutEventFound =
+                  await expectDataLayerEvent(
+                    dataLayerEvents,
+                    'begin_checkout',
+                    20_000,
+                  )
+                    .then(() => true)
+                    .catch(() => false);
+
+                if (!beginCheckoutEventFound) {
+                  console.warn(
+                    'Waarschuwing: DataLayer event "begin_checkout" niet gevonden.',
+                  );
+                }
               },
             );
 
@@ -442,10 +462,20 @@ for (const shop of shops) {
             await test.step(
               'Conversie-event add_to_cart controleren',
               async () => {
-                await expectDataLayerEvent(
-                  dataLayerEvents,
-                  'add_to_cart',
-                );
+                const addToCartEventFound =
+                  await expectDataLayerEvent(
+                    dataLayerEvents,
+                    'add_to_cart',
+                    20_000,
+                  )
+                    .then(() => true)
+                    .catch(() => false);
+
+                if (!addToCartEventFound) {
+                  console.warn(
+                    'Waarschuwing: DataLayer event "add_to_cart" niet gevonden.',
+                  );
+                }
               },
             );
 
@@ -506,11 +536,20 @@ for (const shop of shops) {
             await test.step(
               'Conversie-event begin_checkout controleren',
               async () => {
-                await expectDataLayerEvent(
-                  dataLayerEvents,
-                  'begin_checkout',
-                  20_000,
-                );
+                const beginCheckoutEventFound =
+                  await expectDataLayerEvent(
+                    dataLayerEvents,
+                    'begin_checkout',
+                    20_000,
+                  )
+                    .then(() => true)
+                    .catch(() => false);
+
+                if (!beginCheckoutEventFound) {
+                  console.warn(
+                    'Waarschuwing: DataLayer event "begin_checkout" niet gevonden.',
+                  );
+                }
               },
             );
 

@@ -15,6 +15,7 @@ on:
           - houtvakman-be
           - eikenvakman-nl
           - eikenvakman-be
+          - eichenholzprofi-de
 
 permissions:
   contents: read

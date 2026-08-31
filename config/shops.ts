@@ -2063,6 +2063,301 @@ const allShops: ShopConfig[] = [
       },
     },
   },
+
+  {
+    id:
+      'eichenholzprofi-de',
+    
+    name:
+      'Eichenholzprofi.de',
+    
+    baseUrl:
+      'https://www.eichenholzprofi.de',
+    
+    categoryPath:
+      '/tisch',
+    
+    cartPath:
+      '/cart/',
+    
+    branch:
+      'eiken',
+
+    locale:
+      'de',
+    
+    cartPolicy: {
+      type:
+        'none',
+    },
+
+    selectors: {
+      configurator:
+        'main',
+
+      addToCartButton:
+        'main a:visible, main button:visible',
+
+      standardQuantityInput:
+        'input',
+
+      checkoutButton:
+        'a[href*="/checkout"]:visible, a[href*="/cart/checkout"]:visible, a:has-text("Zur Kasse"):visible, a:has-text("Weiter zur Bestellung"):visible, button:has-text("Zur Kasse"):visible',
+    },
+
+    texts: {
+      configurator: {
+        nextStep:
+          /weiter|nächster schritt/i,
+      },
+
+      product: {
+        increaseQuantity:
+          /wert erhöhen|menge erhöhen/i,
+      },
+
+      cart: {
+        addedToCart:
+          /dieses produkt wurde in den warenkorb gelegt|wurde.*warenkorb|zum warenkorb hinzugefügt|in den warenkorb/i,
+
+        goToCart:
+          /^(weiter zur bestellung|weiter zur kasse|zum warenkorb|warenkorb ansehen|zur kasse)$/i,
+      },
+
+      handlingFee:
+        /bearbeitungskosten|mindermengenzuschlag|handlungskosten|mindermenge/i,
+
+      checkout: {
+        heading:
+          /^(bestellen|kasse)$/i,
+
+        billingAddress:
+          /rechnungsadresse/i,
+
+        shippingMethod:
+          /versandart|versandmethode/i,
+
+        paymentMethods:
+          /zahlungsart|zahlungsmethoden|zahlungsweisen/i,
+      },
+    },
+
+    checkoutFlow: {
+      customer: {
+        email:
+          'test+playwright@rocaonline.nl',
+
+        firstName:
+          'Playwright',
+
+        lastName:
+          'Test',
+
+        postalCode:
+          '47533',
+
+        houseNumber:
+          '10',
+
+        street:
+          'Teststraße',
+
+        city:
+          'Kleve',
+
+        phone:
+          '015123456789',
+      },
+
+      texts: {
+        fields: {
+          email:
+            /^e-mail:\s*\*?$/i,
+
+          firstName:
+            /^vorname:\s*\*?$/i,
+
+          lastName:
+            /^nachname:\s*\*?$/i,
+
+          postalCode:
+            /^postleitzahl:\s*\*?$|^plz:\s*\*?$/i,
+
+          houseNumber:
+            /^nr:\s*\*?$|^hausnummer:\s*\*?$/i,
+
+          street:
+            /^straßenname:\s*\*?$|^strassenname:\s*\*?$|^straße:\s*\*?$|^strasse:\s*\*?$/i,
+
+          city:
+            /^ort:\s*\*?$|^stadt:\s*\*?$/i,
+
+          phone:
+            /^telefon:\s*\*?$/i,
+        },
+
+        buttons: {
+          continue:
+            /weiter|fortfahren/i,
+
+          submitOrder:
+            /zahlungspflichtig bestellen|bestellung abschließen|kaufen/i,
+        },
+
+        sections: {
+          shippingMethod:
+            /versandart|versandmethode/i,
+
+          paymentMethod:
+            /zahlungsart|zahlungsmethode|zahlungsweise/i,
+        },
+
+        terms:
+          /allgemeine geschäftsbedingungen|agb/i,
+      },
+    },
+
+    testProducts: {
+      configurable: {
+        type:
+          'configurable',
+
+        sku:
+          'couchtisch-eiche-nach-mass-4-cm-a-qualitaet-breite',        
+
+        path:
+          '/couchtisch-eiche-nach-mass-4-cm-a-qualitaet-breite.html',
+
+        pageTitle:
+          /couchtisch eiche.*nach ma[ßs].*4 cm.*a[- ]qualit[aä]t.*breite/i,
+
+        cartTitle:
+          /couchtisch eiche.*nach ma[ßs].*4 cm.*a[- ]qualit[aä]t|couchtisch eiche.*breite/i,
+
+        expectedUnitPrice:
+          /[0-9]+[,.][0-9]{2}/i,
+
+        expectHandlingFee:
+          false,
+
+        steps: [
+          {
+            type:
+              'text',
+
+            stepTitle:
+              /abmessungen/i,
+
+            fieldName:
+              /anz/i,
+
+            inputIndex:
+              0,
+
+            value:
+              '100',
+
+            expectedCartText:
+              /l[aä]nge:\s*100/i,
+
+            advanceAfter:
+              false,
+          },
+
+          {
+            type:
+              'text',
+
+            stepTitle:
+              /abmessungen/i,
+
+            fieldName:
+              /anz/i,
+
+            inputIndex:
+              1,
+
+            value:
+              '60',
+
+            expectedCartText:
+              /breite:\s*60/i,
+          },
+
+          {
+            type:
+              'choice',
+
+            stepTitle:
+              /spezielle kantenbearbeitung/i,
+            
+            optionImageName:
+              /gerade kanten.*standard/i,
+
+            expectedCartText:
+              /gerade kanten/i,
+          },
+
+          {
+            type:
+              'choice',
+
+            stepTitle:
+              /inklusive behandlung/i,
+
+            optionImageName:
+              /^nein$/i,
+
+            expectedCartText:
+              /behandlung.*nein|\bnein\b/i,
+          },
+
+          {
+            type:
+              'choice',
+
+            stepTitle:
+             /tischbeine/i,
+
+            optionText:
+             /couchtisch.*beine eiche.*set aus 4 st[uü]ck.*schr[aä]g.*40 cm hoch/i,
+
+            expectedCartText:
+              /tischbeine.*couchtisch.*beine eiche|couchtisch.*beine eiche.*set aus 4 st[uü]ck.*schr[aä]g.*40 cm hoch/i,
+          },
+
+          {
+            type:
+              'choice',
+
+            stepTitle:
+              /geb[uü]rstet/i,
+
+            optionText:
+              /geschliffen.*k[oö]rnung 120|geschliffen/i,
+
+            expectedCartText:
+              /geschliffen/i,
+          },
+
+          {
+            type:
+              'choice',
+
+            stepTitle:
+              /gratleisten/i,
+
+            optionImageName:
+              /ohne gratleisten/i,
+
+            expectedCartText:
+              /ohne gratleisten|gratleisten.*ohne/i,
+          },
+        ],
+      },
+    },
+    
+  },
 ];
 
 const selectedShop =

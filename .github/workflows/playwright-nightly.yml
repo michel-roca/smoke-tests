@@ -29,6 +29,7 @@ jobs:
           - houtvakman-be
           - eikenvakman-nl
           - eikenvakman-be
+          - eichenholzprofi-de
     
     concurrency:
       group: ${{ matrix.shop }}-production-smoke-tests

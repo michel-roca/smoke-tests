@@ -165,6 +165,7 @@ Bij het toevoegen van een nieuwe shop moet altijd eerst worden gecontroleerd wel
 | HOUTvakman.be | ✅ | ✅ | Minimale orderwaarde | ✅ |
 | EIKENvakman.nl | ✅ | ✅ | Geen | ✅ |
 | EIKENvakman.be | ✅ | ✅ | Geen | ✅ |
+| EICHENHOLZprofi.de | ✅ | ✅ | Geen | ✅ |
 
 ## Aanpak bij nieuwe shops
 
@@ -259,14 +260,6 @@ In GitHub Actions kan dit vóór artifact upload worden opgeschoond:
 ```
 
 ## Volgende shops
-
-Na de EIKEN-shops is de volgende logische kandidaat:
-
-```text
-Eichenholzprofi.de
-```
-
-Daarna volgen onder andere:
 
 - natuursteenvakman.nl;
 - composietvakman.be;
